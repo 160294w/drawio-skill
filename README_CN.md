@@ -1,85 +1,85 @@
-# drawio-skill —— 从文字到专业图表
+# drawio-skill —— テキストからプロフェッショナルな図表へ
 
-[English](README.md) | [Online Docs](https://agents365-ai.github.io/drawio-skill/)
+[English](README.md) | [オンラインドキュメント](https://agents365-ai.github.io/drawio-skill/)
 
 <p align="center">
-  <img src="assets/workflow-cn.png" width="900" alt="工作流程">
+  <img src="assets/workflow-cn.png" width="900" alt="ワークフロー">
 </p>
 
-一个把自然语言描述变成 `.drawio` XML,并通过 draw.io 桌面版原生 CLI 导出 PNG / SVG / PDF / JPG 的技能 —— 内置 6 种图表预设(ER 图、UML 类图、序列图、架构图、ML/DL、流程图)、自检 + 自动修复(2 轮)、迭代反馈循环(5 轮),以及可以从样例文件或图片学习的样式预设。
+自然言語の記述を `.drawio` XML に変換し、draw.io デスクトップ版のネイティブ CLI 経由で PNG / SVG / PDF / JPG にエクスポートするスキル。6 種類の図表プリセット（ER 図、UML クラス図、シーケンス図、アーキテクチャ図、ML/DL、フローチャート）、セルフチェック + 自動修正（2 ラウンド）、イテレーティブフィードバックループ（5 ラウンド）、サンプルファイルや画像から学習できるスタイルプリセットを内蔵しています。
 
-支持 Claude Code、Cursor、Copilot、OpenClaw、Codex、Hermes 等任何兼容 [Agent Skills](https://agentskills.io) 规范的 agent。
+Claude Code、Cursor、Copilot、OpenClaw、Codex、Hermes など、[Agent Skills](https://agentskills.io) 仕様に準拠する任意のエージェントをサポートします。
 
-## 文档导航
+## ドキュメントナビゲーション
 
-| 文档 | 内容 |
+| ドキュメント | 内容 |
 |---|---|
-| [docs/COMPARISON_CN.md](docs/COMPARISON_CN.md) | 与原生智能体、其他 draw.io skills/工具的对照表与核心优势 |
-| [docs/INSTALL_CLI_CN.md](docs/INSTALL_CLI_CN.md) | macOS / Windows / Linux 各平台的 draw.io 桌面版 CLI 安装配方 |
-| [docs/INSTALL_SKILL_CN.md](docs/INSTALL_SKILL_CN.md) | 插件市场、手动克隆与更新命令 |
-| [docs/USAGE_CN.md](docs/USAGE_CN.md) | 自然语言提示词、微服务示例、多种拓扑演示(星形 / 分层 / 环形) |
-| [docs/STYLE_PRESETS_CN.md](docs/STYLE_PRESETS_CN.md) | 内置预设、"从文件学习样式"流程、完整的预设管理命令 |
-| [skills/drawio-skill/SKILL.md](skills/drawio-skill/SKILL.md) | agent 加载的工作流指南 |
+| [docs/COMPARISON_CN.md](docs/COMPARISON_CN.md) | ネイティブエージェントや他の draw.io スキル/ツールとの比較表とコアアドバンテージ |
+| [docs/INSTALL_CLI_CN.md](docs/INSTALL_CLI_CN.md) | macOS / Windows / Linux 各プラットフォームの draw.io デスクトップ CLI インストールレシピ |
+| [docs/INSTALL_SKILL_CN.md](docs/INSTALL_SKILL_CN.md) | プラグインマーケット、手動クローンとアップデートコマンド |
+| [docs/USAGE_CN.md](docs/USAGE_CN.md) | 自然言語プロンプト、マイクロサービス例、複数のトポロジーデモ（スター / レイヤード / リング） |
+| [docs/STYLE_PRESETS_CN.md](docs/STYLE_PRESETS_CN.md) | 組み込みプリセット、「ファイルからスタイルを学習」フロー、プリセットの完全な管理コマンド |
+| [skills/drawio-skill/SKILL.md](skills/drawio-skill/SKILL.md) | エージェントが読み込むワークフローガイド |
 
-## 功能说明
+## 機能説明
 
-| 能力 | 说明 |
+| 能力 | 説明 |
 |---|---|
-| `.drawio` XML 生成 | 根据自然语言描述生成 |
-| 多格式导出 | PNG / SVG / PDF / JPG,使用 draw.io 桌面版原生 CLI |
-| 6 种图表类型预设 | ERD、UML 类图、序列图、架构图、ML/深度学习、流程图 |
-| 迭代审查 | 自检 + 自动修复(最多 2 轮),再走 5 轮反馈循环直到你满意 |
-| 样式预设 | 用 `.drawio` 文件或图片"教会"Skill 你的风格,命名保存后随时复用 |
-| 自动触发 | 图表有助于解释复杂系统时自动调用 |
+| `.drawio` XML 生成 | 自然言語の記述から生成 |
+| マルチフォーマットエクスポート | PNG / SVG / PDF / JPG、draw.io デスクトップ版のネイティブ CLI 使用 |
+| 6 種類の図表タイププリセット | ERD、UML クラス図、シーケンス図、アーキテクチャ図、ML/深層学習、フローチャート |
+| イテレーティブレビュー | セルフチェック + 自動修正（最大 2 ラウンド）、その後あなたが満足するまで 5 ラウンドのフィードバックループ |
+| スタイルプリセット | `.drawio` ファイルや画像を使ってあなたのスタイルを Skill に「教え込み」、命名して保存していつでも再利用 |
+| 自動トリガー | 図表が複雑なシステムの説明に役立つ際に自動呼び出し |
 
-## 支持的图表类型
+## 対応している図表タイプ
 
-| 类别 | 示例 | 特色 |
+| カテゴリ | 例 | 特色 |
 |---|---|---|
-| 架构图 | 微服务、云(AWS/GCP/Azure)、网络拓扑、部署 | 分层泳道、hub 居中策略 |
-| ML / 深度学习 | Transformer、CNN、LSTM、GRU | 张量形状标注、层类型配色 |
-| 流程图 | 业务流程、工作流、决策树、状态机 | 语义形状(平行四边形 I/O、菱形判断) |
-| UML | 类图、序列图 | 继承 / 组合 / 聚合箭头;生命线 + 激活框 |
-| 数据图 | ER 图、数据流图(DFD) | 表容器、PK/FK 标记 |
-| 其他 | 组织架构图、思维导图、线框图 | — |
+| アーキテクチャ図 | マイクロサービス、クラウド（AWS/GCP/Azure）、ネットワークトポロジ、デプロイ | 階層スイムレーン、hub 中央配置戦略 |
+| ML / 深層学習 | Transformer、CNN、LSTM、GRU | テンソル形状アノテーション、レイヤータイプ別配色 |
+| フローチャート | ビジネスプロセス、ワークフロー、ディシジョンツリー、ステートマシン | 意味付き形状（平行四辺形 I/O、ひし形ディシジョン） |
+| UML | クラス図、シーケンス図 | 継承 / コンポジション / 集約矢印；ライフライン + アクティベーションフレーム |
+| データ図 | ER 図、データフロー図 (DFD) | テーブルコンテナ、PK/FK 表記 |
+| その他 | 組織図、マインドマップ、ワイヤーフレーム | — |
 
-## 快速开始
+## クイックスタート
 
-两步 —— 先装 draw.io CLI(见 [docs/INSTALL_CLI_CN.md](docs/INSTALL_CLI_CN.md)),再把技能加载到 host(见 [docs/INSTALL_SKILL_CN.md](docs/INSTALL_SKILL_CN.md))。装好之后直接描述你想要的:
+2 ステップ —— まず draw.io CLI をインストール（[docs/INSTALL_CLI_CN.md](docs/INSTALL_CLI_CN.md) を参照）し、次にスキルを host にロード（[docs/INSTALL_SKILL_CN.md](docs/INSTALL_SKILL_CN.md) を参照）します。インストール後は、欲しい内容を直接記述するだけ：
 
 ```
 画一个微服务电商架构图,包含 API Gateway、用户/订单/商品/支付服务、
 Kafka 消息队列、通知服务,以及各自独立的数据库
 ```
 
-技能会规划布局、生成 `.drawio` XML、导出为你选择的格式、自检,然后让你迭代。
+スキルがレイアウトを計画し、`.drawio` XML を生成し、選択したフォーマットにエクスポートし、セルフチェックを行い、その後イテレーションできるようにします。
 
-## 社区
+## コミュニティ
 
-加入交流群获取帮助、提问和最新动态:
+ヘルプ、質問、最新の動向のため、交流グループに参加してください：
 
 - **Discord:** https://discord.gg/79JF5Atuk
-- **微信:** 扫描下方二维码
+- **WeChat:** 下記の QR コードをスキャン
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/agents365ai_wechat_1.png" width="200" alt="微信交流群">
+  <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/agents365ai_wechat_1.png" width="200" alt="WeChat 交流グループ">
 </p>
 
-## 支持作者
+## 作者をサポート
 
-如果这个 skill 对你有帮助,欢迎支持作者:
+この skill があなたの役に立ったら、ぜひ作者をサポートしてください：
 
 <table>
   <tr>
     <td align="center">
-      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/wechat-pay.png" width="180" alt="微信支付">
+      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/wechat-pay.png" width="180" alt="WeChat Pay">
       <br>
-      <b>微信支付</b>
+      <b>WeChat Pay</b>
     </td>
     <td align="center">
-      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/alipay.png" width="180" alt="支付宝">
+      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/alipay.png" width="180" alt="Alipay">
       <br>
-      <b>支付宝</b>
+      <b>Alipay</b>
     </td>
     <td align="center">
       <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/buymeacoffee.png" width="180" alt="Buy Me a Coffee">
@@ -87,9 +87,9 @@ Kafka 消息队列、通知服务,以及各自独立的数据库
       <b>Buy Me a Coffee</b>
     </td>
     <td align="center">
-      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/awarding/award.gif" width="180" alt="打赏">
+      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/awarding/award.gif" width="180" alt="投げ銭">
       <br>
-      <b>打赏</b>
+      <b>投げ銭</b>
     </td>
   </tr>
 </table>

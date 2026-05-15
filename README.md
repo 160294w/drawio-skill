@@ -1,73 +1,73 @@
-# drawio-skill — From Text to Professional Diagrams
+# drawio-skill — テキストからプロフェッショナルな図表へ
 
-[中文文档](README_CN.md) | [Online Docs](https://agents365-ai.github.io/drawio-skill/)
+[中文文档](README_CN.md) | [オンラインドキュメント](https://agents365-ai.github.io/drawio-skill/)
 
 <p align="center">
-  <img src="assets/workflow.png" width="900" alt="Workflow">
+  <img src="assets/workflow.png" width="900" alt="ワークフロー">
 </p>
 
-A skill that turns natural-language descriptions into `.drawio` XML and exports them to PNG / SVG / PDF / JPG via the native draw.io desktop CLI — with 6 diagram presets (ERD, UML Class, Sequence, Architecture, ML/DL, Flowchart), self-check + auto-fix (2 rounds), an iterative feedback loop (5 rounds), and style presets you can capture from a sample file or image.
+自然言語による記述を `.drawio` XML に変換し、draw.io デスクトップのネイティブ CLI 経由で PNG / SVG / PDF / JPG にエクスポートするスキル。6 種類の図表プリセット（ERD、UML クラス図、シーケンス図、アーキテクチャ図、ML/DL、フローチャート）、セルフチェック + 自動修正（2 ラウンド）、イテレーティブなフィードバックループ（5 ラウンド）、サンプルファイルや画像から取り込めるスタイルプリセットを備えています。
 
-Works with Claude Code, Cursor, Copilot, OpenClaw, Codex, Hermes, and any agent that supports the [Agent Skills](https://agentskills.io) format.
+Claude Code、Cursor、Copilot、OpenClaw、Codex、Hermes、そして [Agent Skills](https://agentskills.io) フォーマットに対応する任意のエージェントで動作します。
 
-## Documentation
+## ドキュメント
 
-| Doc | What's inside |
+| ドキュメント | 内容 |
 |---|---|
-| [docs/COMPARISON.md](docs/COMPARISON.md) | Side-by-side tables vs. native agents and other draw.io skills/tools, with key-advantages summary |
-| [docs/INSTALL_CLI.md](docs/INSTALL_CLI.md) | draw.io desktop CLI install recipes for macOS / Windows / Linux |
-| [docs/INSTALL_SKILL.md](docs/INSTALL_SKILL.md) | Plugin marketplace, manual clone, and update commands |
-| [docs/USAGE.md](docs/USAGE.md) | Natural-language prompts, microservices walkthrough, topology demos (star / layered / ring) |
-| [docs/STYLE_PRESETS.md](docs/STYLE_PRESETS.md) | Built-in presets, "learn my style from a file" workflow, manage-presets commands |
-| [skills/drawio-skill/SKILL.md](skills/drawio-skill/SKILL.md) | Workflow guide loaded by the agent |
+| [docs/COMPARISON.md](docs/COMPARISON.md) | ネイティブエージェントや他の draw.io スキル/ツールとの並列比較表、主要アドバンテージのサマリー |
+| [docs/INSTALL_CLI.md](docs/INSTALL_CLI.md) | macOS / Windows / Linux 向けの draw.io デスクトップ CLI インストールレシピ |
+| [docs/INSTALL_SKILL.md](docs/INSTALL_SKILL.md) | プラグインマーケットプレイス、手動クローン、アップデートコマンド |
+| [docs/USAGE.md](docs/USAGE.md) | 自然言語プロンプト、マイクロサービスのウォークスルー、トポロジーデモ（スター / レイヤード / リング） |
+| [docs/STYLE_PRESETS.md](docs/STYLE_PRESETS.md) | 組み込みプリセット、「ファイルから自分のスタイルを学習させる」ワークフロー、プリセット管理コマンド |
+| [skills/drawio-skill/SKILL.md](skills/drawio-skill/SKILL.md) | エージェントが読み込むワークフローガイド |
 
-## What it does
+## 何ができるか
 
-| Capability | Description |
+| 機能 | 説明 |
 |---|---|
-| `.drawio` XML generation | From natural-language descriptions |
-| Multi-format export | PNG / SVG / PDF / JPG via the native draw.io desktop CLI |
-| 6 diagram type presets | ERD, UML Class, Sequence, Architecture, ML/Deep Learning, Flowchart |
-| Iterative review | Self-check + auto-fix (up to 2 rounds), then a 5-round feedback loop until you approve |
-| Style presets | Capture your visual style from a `.drawio` file or image, save by name, reapply on demand |
-| Auto-trigger | Activates whenever diagrams would help explain complex systems |
+| `.drawio` XML 生成 | 自然言語の記述から |
+| マルチフォーマットエクスポート | draw.io デスクトップのネイティブ CLI 経由で PNG / SVG / PDF / JPG |
+| 6 種類の図表タイププリセット | ERD、UML クラス図、シーケンス図、アーキテクチャ図、ML/深層学習、フローチャート |
+| イテレーティブレビュー | セルフチェック + 自動修正（最大 2 ラウンド）、その後あなたが承認するまで 5 ラウンドのフィードバックループ |
+| スタイルプリセット | `.drawio` ファイルや画像からあなたのビジュアルスタイルを取り込み、名前を付けて保存し、必要時に再適用 |
+| 自動トリガー | 複雑なシステムを説明する際に図表が役立つときに自動起動 |
 
-## Supported diagram types
+## 対応している図表タイプ
 
-| Category | Examples | Notable features |
+| カテゴリ | 例 | 主な特徴 |
 |---|---|---|
-| Architecture | microservices, cloud (AWS/GCP/Azure), network topology, deployment | Tier-based swimlanes, hub-center strategy |
-| ML / Deep Learning | Transformer, CNN, LSTM, GRU | Tensor shape annotations, layer-type color coding |
-| Flowcharts | business processes, workflows, decision trees, state machines | Semantic shapes (parallelogram I/O, diamond decisions) |
-| UML | class diagrams, sequence diagrams | Inheritance / composition / aggregation arrows; lifelines + activation boxes |
-| Data | ER diagrams, data flow diagrams (DFD) | Table containers, PK/FK notation |
-| Other | org charts, mind maps, wireframes | — |
+| アーキテクチャ | マイクロサービス、クラウド（AWS/GCP/Azure）、ネットワークトポロジ、デプロイ | 階層別スイムレーン、ハブセンター戦略 |
+| ML / 深層学習 | Transformer、CNN、LSTM、GRU | テンソル形状アノテーション、レイヤータイプの色分け |
+| フローチャート | ビジネスプロセス、ワークフロー、ディシジョンツリー、ステートマシン | 意味付きの形状（平行四辺形 I/O、ひし形ディシジョン） |
+| UML | クラス図、シーケンス図 | 継承 / コンポジション / 集約矢印；ライフライン + アクティベーションボックス |
+| データ | ER 図、データフロー図 (DFD) | テーブルコンテナ、PK/FK 表記 |
+| その他 | 組織図、マインドマップ、ワイヤーフレーム | — |
 
-## Quick Start
+## クイックスタート
 
-Two steps — install the draw.io CLI first (see [docs/INSTALL_CLI.md](docs/INSTALL_CLI.md)), then drop the skill into your host (see [docs/INSTALL_SKILL.md](docs/INSTALL_SKILL.md)). After that, just describe what you want:
+2 ステップ — まず draw.io CLI をインストール（[docs/INSTALL_CLI.md](docs/INSTALL_CLI.md) を参照）し、次にスキルをホストに配置（[docs/INSTALL_SKILL.md](docs/INSTALL_SKILL.md) を参照）します。その後は欲しいものを記述するだけです：
 
 ```
 Create a microservices e-commerce architecture with API Gateway, auth/user/order/product/payment services,
 Kafka message queue, notification service, and separate databases for each service
 ```
 
-The skill plans the layout, generates the `.drawio` XML, exports to your chosen format, self-checks, and lets you iterate.
+スキルがレイアウトを計画し、`.drawio` XML を生成し、選択したフォーマットにエクスポートし、セルフチェックを行い、あなたがイテレーションできるようにします。
 
-## Community
+## コミュニティ
 
-Join us for help, Q&A, and updates:
+ヘルプ、Q&A、アップデートのために参加しよう：
 
 - **Discord:** https://discord.gg/79JF5Atuk
-- **WeChat:** scan the QR code below
+- **WeChat:** 下記の QR コードをスキャン
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/agents365ai_wechat_1.png" width="200" alt="WeChat Community Group">
+  <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/qrcode/agents365ai_wechat_1.png" width="200" alt="WeChat コミュニティグループ">
 </p>
 
-## Support
+## サポート
 
-If this skill helps you, consider supporting the author:
+このスキルが役に立ったら、作者へのサポートをご検討ください：
 
 <table>
   <tr>
@@ -87,20 +87,20 @@ If this skill helps you, consider supporting the author:
       <b>Buy Me a Coffee</b>
     </td>
     <td align="center">
-      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/awarding/award.gif" width="180" alt="Give a Reward">
+      <img src="https://raw.githubusercontent.com/Agents365-ai/images_payment/main/awarding/award.gif" width="180" alt="報酬を贈る">
       <br>
-      <b>Give a Reward</b>
+      <b>報酬を贈る</b>
     </td>
   </tr>
 </table>
 
-## Author
+## 作者
 
 **Agents365-ai**
 
 - Bilibili: https://space.bilibili.com/441831884
 - GitHub: https://github.com/Agents365-ai
 
-## License
+## ライセンス
 
 MIT
