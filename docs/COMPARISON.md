@@ -1,54 +1,54 @@
-# Comparison
+# 比較
 
-[中文](COMPARISON_CN.md)
+[中国語](COMPARISON_CN.md)
 
-## vs No Skill (native agent)
+## スキルなし（ネイティブエージェント）との比較
 
-| Feature | Native agent | This skill |
+| 機能 | ネイティブエージェント | このスキル |
 |---------|-------------|------------|
-| Generate draw.io XML | Yes — LLMs know the format | Yes |
-| Self-check after export | No | Yes — reads PNG and auto-fixes 6 issue types |
-| Iterative review loop | No — must manually re-prompt | Yes — targeted edits, 5-round safety valve |
-| Proactive triggers | No — only when explicitly asked | Yes — auto-suggests when 3+ components |
-| Layout guidelines | None — varies by run | Complexity-scaled spacing, routing corridors, hub placement |
-| Grid alignment | No | Yes — all coordinates snap to 10px multiples |
-| Diagram type presets | No | Yes — 6 presets (ERD, UML, Sequence, Architecture, ML/DL, Flowchart) |
-| Animated connectors | No | Yes — `flowAnimation=1` for data-flow visualization |
-| ML model diagrams | No | Yes — tensor shape annotations, layer-type color coding |
-| Color palette | Random/inconsistent | 7-color semantic system (blue=services, green=DB, purple=auth...) |
-| Edge routing rules | Basic | Pin entry/exit points, distribute connections, waypoint corridors |
-| Container/group patterns | None | Swimlane, group, custom container with parent-child nesting |
-| Embed diagram in export | No | Yes — `--embed-diagram` keeps exported PNG/SVG/PDF editable |
-| Browser fallback | No | Yes — generates diagrams.net URL when CLI unavailable |
-| Auto-launch desktop app | No | Yes — opens `.drawio` file after export for fine-tuning |
+| draw.io XML の生成 | はい — LLM はこの形式を知っている | はい |
+| エクスポート後のセルフチェック | いいえ | はい — PNG を読み取り 6 種類の問題を自動修正 |
+| イテレーティブレビューループ | いいえ — 手動で再プロンプトが必要 | はい — ターゲットを絞った編集、5 ラウンドの安全弁 |
+| プロアクティブなトリガー | いいえ — 明示的に頼んだときのみ | はい — 3 つ以上のコンポーネントがあるときに自動提案 |
+| レイアウトガイドライン | なし — 実行ごとに変わる | 複雑度に応じたスペーシング、ルーティングコリドー、ハブ配置 |
+| グリッド整列 | いいえ | はい — すべての座標が 10px の倍数にスナップ |
+| 図表タイププリセット | いいえ | はい — 6 種のプリセット（ERD、UML、シーケンス、アーキテクチャ、ML/DL、フローチャート） |
+| アニメーションコネクター | いいえ | はい — データフロー可視化のための `flowAnimation=1` |
+| ML モデル図 | いいえ | はい — テンソル形状アノテーション、レイヤータイプ別の色分け |
+| カラーパレット | ランダム/一貫性なし | 7 色の意味的システム（青=サービス、緑=DB、紫=認証...） |
+| エッジルーティングルール | 基本的 | エントリー/エグジット点の固定、接続の分散、ウェイポイントコリドー |
+| コンテナ/グループパターン | なし | スイムレーン、グループ、親子ネスティング付きカスタムコンテナ |
+| エクスポートに図表を埋め込む | いいえ | はい — `--embed-diagram` でエクスポートした PNG/SVG/PDF を編集可能に保つ |
+| ブラウザフォールバック | いいえ | はい — CLI が使えないときに diagrams.net URL を生成 |
+| デスクトップアプリの自動起動 | いいえ | はい — エクスポート後に `.drawio` ファイルを開いて微調整可能 |
 
-## vs Other draw.io Skills & Tools
+## 他の draw.io スキル & ツールとの比較
 
-| Feature | This skill | [jgraph/drawio-mcp](https://github.com/jgraph/drawio-mcp) (official, 1.3k⭐) | [bahayonghang/drawio-skills](https://github.com/bahayonghang/drawio-skills) (60⭐) | [GBSOSS/ai-drawio](https://github.com/GBSOSS/ai-drawio) (63⭐) |
+| 機能 | このスキル | [jgraph/drawio-mcp](https://github.com/jgraph/drawio-mcp)（公式、1.3k⭐） | [bahayonghang/drawio-skills](https://github.com/bahayonghang/drawio-skills)（60⭐） | [GBSOSS/ai-drawio](https://github.com/GBSOSS/ai-drawio)（63⭐） |
 |---------|-----------|---------------|-------------------|--------------|
-| **Approach** | Pure SKILL.md | SKILL.md / MCP / Project | YAML DSL + MCP | Plugin + browser |
-| **Dependencies** | draw.io desktop only | draw.io desktop | MCP server (`npx`) | Browser + local server |
-| **Multi-agent** | ✅ 6 platforms | ❌ Claude Code only | ❌ Claude Code only | ❌ |
-| **Self-check** | ✅ 2-round auto-fix | ❌ | ❌ | ❌ screenshot |
-| **Iterative review** | ✅ 5-round loop | ❌ generate once | ✅ 3 workflows | ❌ |
-| **Layout guidance** | ✅ complexity-scaled + grid snap | ✅ basic spacing | ❌ relies on MCP | ❌ |
-| **Diagram presets** | ✅ 6 types (ERD, UML, Seq, Arch, ML, Flow) | ❌ | ❌ | ❌ |
-| **Animated edges** | ✅ `flowAnimation=1` | ❌ | ❌ | ❌ |
-| **ML/DL diagrams** | ✅ tensor shapes, layer colors | ❌ | ❌ | ❌ |
-| **Color system** | ✅ 7-color semantic | ❌ | ✅ 5 themes | ❌ |
-| **Container/group** | ✅ swimlane + group | ✅ detailed | ❌ | ❌ |
-| **Embed diagram** | ✅ `--embed-diagram` | ✅ | ❌ | ❌ |
-| **Edge routing** | ✅ corridors + waypoints | ✅ arrowhead rules | ❌ | ❌ |
-| **Browser fallback** | ✅ diagrams.net URL | ❌ | ❌ | ❌ |
-| **Auto-launch** | ✅ opens desktop app | ❌ | ❌ | ❌ |
-| **Cloud icons** | AWS basic | ❌ | ✅ AWS/GCP/Azure/K8s | ❌ |
-| **Zero-config** | ✅ copy skills/drawio-skill/ | ✅ | ❌ needs `npx` | ❌ needs plugin install |
+| **アプローチ** | 純粋な SKILL.md | SKILL.md / MCP / Project | YAML DSL + MCP | プラグイン + ブラウザ |
+| **依存関係** | draw.io デスクトップのみ | draw.io デスクトップ | MCP サーバー（`npx`） | ブラウザ + ローカルサーバー |
+| **マルチエージェント** | ✅ 6 プラットフォーム | ❌ Claude Code のみ | ❌ Claude Code のみ | ❌ |
+| **セルフチェック** | ✅ 2 ラウンド自動修正 | ❌ | ❌ | ❌ スクリーンショット |
+| **イテレーティブレビュー** | ✅ 5 ラウンドループ | ❌ 一回生成 | ✅ 3 ワークフロー | ❌ |
+| **レイアウトガイダンス** | ✅ 複雑度スケール + グリッドスナップ | ✅ 基本スペーシング | ❌ MCP に依存 | ❌ |
+| **図表プリセット** | ✅ 6 種類（ERD、UML、シーケンス、アーキ、ML、フロー） | ❌ | ❌ | ❌ |
+| **アニメーションエッジ** | ✅ `flowAnimation=1` | ❌ | ❌ | ❌ |
+| **ML/DL 図** | ✅ テンソル形状、レイヤー色 | ❌ | ❌ | ❌ |
+| **カラーシステム** | ✅ 7 色意味付け | ❌ | ✅ 5 テーマ | ❌ |
+| **コンテナ/グループ** | ✅ スイムレーン + グループ | ✅ 詳細 | ❌ | ❌ |
+| **図表を埋め込む** | ✅ `--embed-diagram` | ✅ | ❌ | ❌ |
+| **エッジルーティング** | ✅ コリドー + ウェイポイント | ✅ 矢印ルール | ❌ | ❌ |
+| **ブラウザフォールバック** | ✅ diagrams.net URL | ❌ | ❌ | ❌ |
+| **自動起動** | ✅ デスクトップアプリを開く | ❌ | ❌ | ❌ |
+| **クラウドアイコン** | AWS 基本 | ❌ | ✅ AWS/GCP/Azure/K8s | ❌ |
+| **ゼロ設定** | ✅ skills/drawio-skill/ をコピー | ✅ | ❌ `npx` が必要 | ❌ プラグインのインストールが必要 |
 
-## Key advantages
+## 主な利点
 
-1. **Self-check + iterative loop** — the only pure-SKILL.md solution that reads its own output and auto-fixes before showing the user, then supports multi-round refinement
-2. **6 diagram type presets** — ERD, UML Class, Sequence, Architecture, ML/Deep Learning, Flowchart — each with preset shapes, styles, and layout conventions
-3. **ML/DL model diagrams** — tensor shape annotations, layer-type color coding, encoder/decoder swimlanes — built for academic papers
-4. **Multi-agent, zero-config** — works across 6 platforms with just the `skills/drawio-skill/` directory + draw.io desktop. No MCP server, no Python, no Node.js, no browser
-5. **Production-grade layout** — grid-aligned coordinates, complexity-scaled spacing, routing corridors, hub-center strategy, animated connectors
-6. **Browser fallback** — generates diagrams.net URLs when the desktop CLI is unavailable, plus auto-launch for desktop editing
+1. **セルフチェック + イテレーティブループ** — 自身の出力を読み取り、ユーザーに見せる前に自動修正し、その後マルチラウンドの絞り込みをサポートする唯一の純粋 SKILL.md ソリューション
+2. **6 種類の図表タイププリセット** — ERD、UML クラス図、シーケンス、アーキテクチャ、ML/深層学習、フローチャート — それぞれにプリセット形状、スタイル、レイアウト規約
+3. **ML/DL モデル図** — テンソル形状アノテーション、レイヤータイプの色分け、エンコーダ/デコーダ・スイムレーン — 学術論文向けに構築
+4. **マルチエージェント、ゼロ設定** — `skills/drawio-skill/` ディレクトリと draw.io デスクトップだけで 6 プラットフォーム横断で動作。MCP サーバー、Python、Node.js、ブラウザ不要
+5. **プロダクション品質のレイアウト** — グリッド整列座標、複雑度スケーリングのスペーシング、ルーティングコリドー、ハブセンター戦略、アニメーションコネクター
+6. **ブラウザフォールバック** — デスクトップ CLI が使えないときに diagrams.net URL を生成、加えてデスクトップ編集のための自動起動

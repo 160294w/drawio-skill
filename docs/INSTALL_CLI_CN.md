@@ -1,40 +1,40 @@
-# 前置依赖 —— draw.io 桌面版
+# 前提依存 —— draw.io デスクトップ版
 
 [English](INSTALL_CLI.md)
 
-需要安装 draw.io 桌面版用于图表导出：
+図表エクスポート用に draw.io デスクトップ版のインストールが必要：
 
 ## macOS
 
 ```bash
-# 推荐方式 — Homebrew
+# 推奨方法 — Homebrew
 brew install --cask drawio
 
-# 验证安装
+# インストール検証
 drawio --version
 ```
 
 ## Windows
 
-从以下地址下载安装包：https://github.com/jgraph/drawio-desktop/releases
+以下のアドレスからインストーラーをダウンロード：https://github.com/jgraph/drawio-desktop/releases
 
 ```powershell
-# 验证安装
+# インストール検証
 "C:\Program Files\draw.io\draw.io.exe" --version
 ```
 
 ## Linux
 
-从以下地址下载 `.deb` 或 `.rpm` 包：https://github.com/jgraph/drawio-desktop/releases
+以下のアドレスから `.deb` または `.rpm` パッケージをダウンロード：https://github.com/jgraph/drawio-desktop/releases
 
 ```bash
-# 无头导出（Linux 服务器无显示器时必须）
+# ヘッドレスエクスポート（Linux サーバーでディスプレイ無し時に必須）
 sudo apt install xvfb  # Debian/Ubuntu
 xvfb-run -a drawio --version
 ```
 
-| 平台 | 额外步骤 |
+| プラットフォーム | 追加ステップ |
 |------|----------|
-| **macOS** | Homebrew 安装后无需额外操作 |
-| **Windows** | 如不在 PATH 中，使用完整路径 |
-| **Linux** | 无头导出时命令前加 `xvfb-run -a` |
+| **macOS** | Homebrew インストール後、追加操作不要 |
+| **Windows** | PATH にない場合はフルパスを使用 |
+| **Linux** | ヘッドレスエクスポート時はコマンドの前に `xvfb-run -a` を付与 |

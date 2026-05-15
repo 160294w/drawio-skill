@@ -1,45 +1,45 @@
-# Usage
+# 使い方
 
-[中文](USAGE_CN.md)
+[中国語](USAGE_CN.md)
 
-Just describe what you want:
+欲しいものを記述するだけ：
 
 ```
 Create a microservices e-commerce architecture with API Gateway, auth/user/order/product/payment services,
 Kafka message queue, notification service, and separate databases for each service
 ```
 
-The agent will generate the `.drawio` XML file and export it to PNG automatically.
+エージェントが `.drawio` XML ファイルを生成し、自動的に PNG にエクスポートします。
 
-## Example
+## 例
 
-**Prompt:**
+**プロンプト：**
 > Create a microservices e-commerce architecture with Mobile/Web/Admin clients, API Gateway,
 > Auth/User/Order/Product/Payment services, Kafka message queue, Notification service,
 > and User DB / Order DB / Product DB / Redis Cache / Stripe API
 
-**Output:**
+**出力：**
 
-![Microservices Architecture](../assets/microservices-example.png)
+![マイクロサービスアーキテクチャ](../assets/microservices-example.png)
 
-## Topology demos
+## トポロジーデモ
 
-The skill handles various diagram topologies with clean edge routing — no lines crossing through shapes.
+このスキルは、クリーンなエッジルーティング — 線が形状を貫通しない — でさまざまな図表トポロジーを扱います。
 
-### Star topology (7 nodes)
+### スタートポロジー（7 ノード）
 
-Central message broker with 6 microservices radiating outward. Edges enter Kafka from different sides, zero crossings.
+中央のメッセージブローカーから 6 つのマイクロサービスが外側に放射状に配置。エッジはさまざまな側面から Kafka に入り、ゼロ交差です。
 
-![Star topology](../assets/demo-star.png)
+![スタートポロジー](../assets/demo-star.png)
 
-### Layered flow (10 nodes, 4 tiers)
+### レイヤードフロー（10 ノード、4 階層）
 
-E-commerce architecture with 2 cross-connections: Order→Product (same-tier horizontal) and Auth→Redis (diagonal via routing corridor). All edges route cleanly.
+E コマースアーキテクチャに 2 つのクロス接続：Order→Product（同階層水平）と Auth→Redis（ルーティングコリドー経由の斜め）。すべてのエッジがクリーンにルーティングされます。
 
-![Layered flow](../assets/demo-layered.png)
+![レイヤードフロー](../assets/demo-layered.png)
 
-### Ring / cycle (8 nodes)
+### リング / サイクル（8 ノード）
 
-CI/CD pipeline with a closed loop and 2 spur branches. Edges flow along the perimeter without crossing the interior.
+クローズドループと 2 つのスパー分岐を持つ CI/CD パイプライン。エッジは内部を横切らずに外周に沿って流れます。
 
-![Ring cycle](../assets/demo-ring.png)
+![リングサイクル](../assets/demo-ring.png)

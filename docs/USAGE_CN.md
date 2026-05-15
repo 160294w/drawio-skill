@@ -1,8 +1,8 @@
-# 使用方式
+# 使い方
 
 [English](USAGE.md)
 
-直接描述你想要的图表：
+欲しい図表を直接記述してください：
 
 ```
 画一个微服务电商架构图，包含 Mobile/Web/Admin 客户端，API Gateway，
@@ -10,37 +10,37 @@ Auth/User/Order/Product/Payment 微服务，Kafka 消息队列，Notification �
 以及各自独立的数据库
 ```
 
-智能体会自动生成 `.drawio` 文件并导出为 PNG。
+エージェントが自動的に `.drawio` ファイルを生成し PNG にエクスポートします。
 
-## 示例
+## 例
 
-**提示词：**
+**プロンプト：**
 > 画一个微服务电商架构图，包含 Mobile/Web/Admin 客户端，API Gateway（含认证+限流+路由），
 > Auth/User/Order/Product/Payment 微服务，Kafka 消息队列，Notification 服务，
 > User DB / Order DB / Product DB / Redis Cache / Stripe API
 
-**输出效果：**
+**出力結果：**
 
-![微服务架构图](../assets/microservices-example.png)
+![マイクロサービスアーキテクチャ図](../assets/microservices-example.png)
 
-## 拓扑示例
+## トポロジー例
 
-本 skill 支持多种图表拓扑，线条路由清晰 —— 不会穿越无关的形状。
+本 skill は複数の図表トポロジーをサポートし、線のルーティングが明瞭 —— 無関係な形状を貫通しません。
 
-### 星形拓扑（7 个节点）
+### スタートポロジー（7 ノード）
 
-中央消息代理 + 6 个微服务辐射排列。连线从不同方向进入 Kafka，零交叉。
+中央メッセージブローカー + 6 つのマイクロサービスを放射状に配置。接続線はさまざまな方向から Kafka に入り、ゼロ交差。
 
-![星形拓扑](../assets/demo-star-cn.png)
+![スタートポロジー](../assets/demo-star-cn.png)
 
-### 分层流程（10 个节点，4 层）
+### レイヤード処理フロー（10 ノード、4 階層）
 
-电商架构，含 2 条交叉连线：订单→商品（同层水平）和 认证→Redis（对角线，经路由走廊绕行）。所有线条路由清晰。
+E コマースアーキテクチャ。2 本の交差接続を含む：注文→商品（同階層水平）と認証→Redis（対角線、ルーティングコリドー経由で迂回）。すべての線のルーティングは明瞭。
 
-![分层流程](../assets/demo-layered-cn.png)
+![レイヤード処理フロー](../assets/demo-layered-cn.png)
 
-### 环形 / 循环（8 个节点）
+### リング / サイクル（8 ノード）
 
-CI/CD 流水线，包含闭合回路和 2 个分支。线条沿矩形外围流动，不穿越内部区域。
+CI/CD パイプライン、閉じたループと 2 つの分岐を含む。線は矩形外周に沿って流れ、内部領域を貫通しない。
 
-![环形拓扑](../assets/demo-ring-cn.png)
+![リングトポロジー](../assets/demo-ring-cn.png)

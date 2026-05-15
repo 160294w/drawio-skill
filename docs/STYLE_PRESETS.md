@@ -1,47 +1,47 @@
-# Style Presets
+# スタイルプリセット
 
-[中文](STYLE_PRESETS_CN.md)
+[中国語](STYLE_PRESETS_CN.md)
 
-Style presets let you capture and reuse a visual style across diagrams. When a preset is active, it replaces the built-in color palette, shape vocabulary, fonts, and edge defaults.
+スタイルプリセットを使うと、図表全体でビジュアルスタイルを取り込んで再利用できます。プリセットがアクティブなとき、組み込みのカラーパレット、形状語彙、フォント、エッジのデフォルトを置き換えます。
 
-## Built-in presets
+## 組み込みプリセット
 
-| Name | Description |
+| 名前 | 説明 |
 |------|-------------|
-| `default` | Clean blue/green/yellow palette matching the built-in conventions |
-| `corporate` | Muted, professional palette suited for business presentations |
-| `handdrawn` | Sketch-style strokes for informal or whiteboard-style diagrams |
+| `default` | 組み込みの慣例に合わせたクリーンな青/緑/黄のパレット |
+| `corporate` | ビジネスプレゼンテーション向けの落ち着いたプロフェッショナルなパレット |
+| `handdrawn` | カジュアル、またはホワイトボードスタイルの図表向けのスケッチ風ストローク |
 
-## Apply a preset to a diagram
+## 図表にプリセットを適用する
 
 ```
 Draw a microservices architecture using my "corporate" style
 ```
 
-Or set a default so all future diagrams use it automatically:
+または、すべての将来の図表で自動的に使うデフォルトを設定する：
 
 ```
 Make "corporate" my default style
 ```
 
-## Learn your style from a file
+## ファイルからあなたのスタイルを学習する
 
-Point the skill at any `.drawio` file or flat image:
+スキルを任意の `.drawio` ファイルやフラット画像に指し示す：
 
 ```
 Learn my style from ~/diagrams/brand.drawio as "mybrand"
 Learn my style from ~/diagrams/screenshot.png as "mybrand"
 ```
 
-The skill extracts colors, shapes, fonts, and edge style, renders a sample diagram for preview, and saves to `~/.drawio-skill/styles/mybrand.json` only after you approve.
+スキルが色、形状、フォント、エッジスタイルを抽出し、サンプル図表をレンダリングしてプレビューを表示し、あなたが承認してから `~/.drawio-skill/styles/mybrand.json` に保存します。
 
-## Manage presets
+## プリセットの管理
 
-| What you say | What happens |
+| 言うこと | 起こること |
 |---|---|
-| "list my styles" | Shows all user and built-in presets in a table |
-| "show my `<name>` style" | Pretty-prints the preset JSON |
-| "make `<name>` the default" | Sets it as the active default for all diagrams |
-| "remove default" | Clears the default (reverts to built-in conventions) |
-| "delete `<name>`" | Deletes the user preset (prompts for confirmation) |
-| "rename `<a>` to `<b>`" | Renames a user preset |
+| "list my styles" | すべてのユーザーおよび組み込みプリセットをテーブルで表示 |
+| "show my `<name>` style" | プリセットの JSON を整形して出力 |
+| "make `<name>` the default" | すべての図表のアクティブなデフォルトに設定 |
+| "remove default" | デフォルトをクリアする（組み込みの慣例に戻る） |
+| "delete `<name>`" | ユーザープリセットを削除する（確認を求める） |
+| "rename `<a>` to `<b>`" | ユーザープリセットの名前を変更する |

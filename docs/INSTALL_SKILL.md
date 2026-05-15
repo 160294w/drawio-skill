@@ -1,38 +1,38 @@
-# Skill Installation
+# スキルのインストール
 
-[中文](INSTALL_SKILL_CN.md)
+[中国語](INSTALL_SKILL_CN.md)
 
 ```bash
-# Any agent (Claude Code, Cursor, Copilot, etc.)
+# 任意のエージェント（Claude Code、Cursor、Copilot など）
 npx skills add Agents365-ai/365-skills -g
 
-# Claude Code only
+# Claude Code のみ
 > /plugin marketplace add Agents365-ai/365-skills
 > /plugin install drawio
 ```
 
-Manual install — clone into your agent's skills directory:
+手動インストール — エージェントのスキルディレクトリにクローン：
 
 ```bash
 git clone https://github.com/Agents365-ai/drawio-skill.git ~/.claude/skills/drawio-skill
 ```
 
-Common paths: `~/.claude/skills/` (Claude Code), `~/.config/opencode/skills/` (Opencode), `~/.openclaw/skills/` (OpenClaw), `~/.agents/skills/` (Codex). Also indexed on [SkillsMP](https://skillsmp.com/skills/agents365-ai-drawio-skill-skill-md) and [ClawHub](https://clawhub.ai/agents365-ai/drawio-pro-skill).
+よく使うパス：`~/.claude/skills/`（Claude Code）、`~/.config/opencode/skills/`（Opencode）、`~/.openclaw/skills/`（OpenClaw）、`~/.agents/skills/`（Codex）。[SkillsMP](https://skillsmp.com/skills/agents365-ai-drawio-skill-skill-md) と [ClawHub](https://clawhub.ai/agents365-ai/drawio-pro-skill) にもインデックスされています。
 
-## Updates
+## アップデート
 
-The skill auto-checks for updates once per 24 hours on first use in a conversation. When a new version is available, the agent prints a one-line notice in the reply. To apply:
+スキルは会話で初めて使用されるたびに、24 時間ごとに 1 回自動でアップデートをチェックします。新しいバージョンが利用可能な場合、エージェントは返信に 1 行の通知を表示します。適用するには：
 
 ```bash
 cd <your-install-path>/drawio-skill && git pull
 ```
 
-The check is read-only, self-throttled, and silent when up to date, offline, or not a git install — it won't block or slow the workflow.
+このチェックは読み取り専用、セルフスロットル、最新の場合・オフラインの場合・git インストールでない場合は無音 — ワークフローをブロックしたり遅くしたりすることはありません。
 
-Plugin-marketplace installs update automatically via the 365-skills umbrella. Package-manager installs handle updates themselves:
+プラグインマーケットプレイス経由のインストールは、365-skills 傘下で自動的にアップデートされます。パッケージマネージャ経由のインストールはそれ自体でアップデートを処理します：
 
 ```bash
-# Claude Code plugin
+# Claude Code プラグイン
 /plugin update drawio
 
 # OpenClaw
