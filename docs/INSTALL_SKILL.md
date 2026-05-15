@@ -11,25 +11,25 @@ npx skills add Agents365-ai/365-skills -g
 > /plugin install drawio
 ```
 
-手動インストール — エージェントのスキルディレクトリにクローン：
+手動インストール — エージェントのスキルディレクトリにクローンします：
 
 ```bash
 git clone https://github.com/Agents365-ai/drawio-skill.git ~/.claude/skills/drawio-skill
 ```
 
-よく使うパス：`~/.claude/skills/`（Claude Code）、`~/.config/opencode/skills/`（Opencode）、`~/.openclaw/skills/`（OpenClaw）、`~/.agents/skills/`（Codex）。[SkillsMP](https://skillsmp.com/skills/agents365-ai-drawio-skill-skill-md) と [ClawHub](https://clawhub.ai/agents365-ai/drawio-pro-skill) にもインデックスされています。
+よく使うパス：`~/.claude/skills/`（Claude Code）、`~/.config/opencode/skills/`（Opencode）、`~/.openclaw/skills/`（OpenClaw）、`~/.agents/skills/`（Codex）。[SkillsMP](https://skillsmp.com/skills/agents365-ai-drawio-skill-skill-md) と [ClawHub](https://clawhub.ai/agents365-ai/drawio-pro-skill) にも登録されています。
 
 ## アップデート
 
-スキルは会話で初めて使用されるたびに、24 時間ごとに 1 回自動でアップデートをチェックします。新しいバージョンが利用可能な場合、エージェントは返信に 1 行の通知を表示します。適用するには：
+このスキルは、会話で初めて使われたタイミングで 24 時間に 1 回自動でアップデートをチェックします。新しいバージョンが利用可能な場合、エージェントが返信の中で 1 行通知します。アップデートを適用するには：
 
 ```bash
 cd <your-install-path>/drawio-skill && git pull
 ```
 
-このチェックは読み取り専用、セルフスロットル、最新の場合・オフラインの場合・git インストールでない場合は無音 — ワークフローをブロックしたり遅くしたりすることはありません。
+このチェックは読み取り専用かつ自動でスロットリングされ、最新の場合・オフラインの場合・git インストールでない場合は何も表示されません。ワークフローを止めたり遅くしたりすることはありません。
 
-プラグインマーケットプレイス経由のインストールは、365-skills 傘下で自動的にアップデートされます。パッケージマネージャ経由のインストールはそれ自体でアップデートを処理します：
+プラグインマーケットプレイス経由でインストールした場合は、365-skills の傘下で自動的にアップデートされます。パッケージマネージャ経由でインストールした場合は、各ツールのアップデートコマンドを使ってください：
 
 ```bash
 # Claude Code プラグイン
