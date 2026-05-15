@@ -1,49 +1,49 @@
 ---
 name: drawio-skill
 version: 1.5.2
-description: Use when user requests diagrams, flowcharts, architecture charts, or visualizations. Also use proactively when explaining systems with 3+ components, complex data flows, or relationships that benefit from visual representation. Generates .drawio XML files and exports to PNG/SVG/PDF locally using the native draw.io desktop CLI.
+description: ユーザーが図表、フローチャート、アーキテクチャ図、または可視化を要求するときに使用する。また、3 つ以上のコンポーネントを持つシステム、複雑なデータフロー、または視覚的表現が有益な関係を説明するときにプロアクティブに使用する。draw.io デスクトップのネイティブ CLI を使ってローカルで `.drawio` XML ファイルを生成し、PNG/SVG/PDF にエクスポートする。
 license: MIT
 homepage: https://github.com/Agents365-ai/drawio-skill
-compatibility: Requires draw.io desktop app CLI on PATH (macOS/Linux/Windows). Self-check step requires a vision-enabled model (e.g., Claude Sonnet/Opus); gracefully skipped if unavailable.
+compatibility: draw.io デスクトップアプリの CLI が PATH 上にある必要がある（macOS/Linux/Windows）。セルフチェックステップにはビジョン対応モデル（例：Claude Sonnet/Opus）が必要；利用不可の場合は丁寧にスキップ。
 platforms: [macos, linux, windows]
 metadata: {"openclaw":{"requires":{"anyBins":["draw.io","drawio"]},"emoji":"📐","os":["darwin","linux","win32"],"install":[{"id":"brew-drawio","kind":"brew","formula":"drawio","bins":["draw.io"],"label":"Install draw.io via Homebrew","os":["darwin"]}]},"hermes":{"tags":["drawio","diagram","flowchart","architecture","visualization","uml"],"category":"design","requires_tools":["draw.io"],"related_skills":["mermaid","excalidraw","plantuml"]},"author":"Agents365-ai","version":"1.5.2"}
 ---
 
-# Draw.io Diagrams
+# Draw.io 図表
 
-## Overview
+## 概要
 
-Generate `.drawio` XML files and export to PNG/SVG/PDF/JPG locally using the native draw.io desktop app CLI.
+draw.io デスクトップアプリの CLI を使ってローカルで `.drawio` XML ファイルを生成し、PNG/SVG/PDF/JPG にエクスポートする。
 
-**Supported formats:** PNG, SVG, PDF, JPG — no browser automation needed.
+**サポートされているフォーマット：** PNG、SVG、PDF、JPG — ブラウザの自動化は不要。
 
-PNG, SVG, and PDF exports support `--embed-diagram` (`-e`) — the exported file contains the full diagram XML, so opening it in draw.io recovers the editable diagram. Use double extensions (`name.drawio.png`) to signal embedded XML.
+PNG、SVG、PDF のエクスポートは `--embed-diagram`（`-e`）をサポート — エクスポートしたファイルには完全な図表 XML が含まれるため、draw.io で開くと編集可能な図表を復元できる。埋め込まれた XML を示すには二重拡張子（`name.drawio.png`）を使う。
 
-## Bundled resources
+## 同梱リソース
 
-When the workflow references one of these, read it on demand — none of them need to be in context up front.
+ワークフローがこれらのいずれかを参照するとき、オンデマンドで読む — 事前にコンテキストに入れる必要はない。
 
-| File | Read it when |
+| ファイル | 読むタイミング |
 |---|---|
-| `references/diagram-types.md` | The user names a specific diagram type (ERD, UML class, sequence, architecture, ML/DL, flowchart) |
-| `references/style-presets.md` | The user asks to learn / save / list / set-default / delete a style preset, or you've resolved an active preset and need the application rules |
-| `references/style-extraction.md` | You're inside the Learn flow and need the extraction procedure (called from `style-presets.md`) |
-| `references/troubleshooting.md` | An export fails, vision rejects a PNG, or a rendering looks wrong |
-| `scripts/repair_png.py` | After every `-e` PNG export — fixes draw.io's truncated IEND chunk (issue #8) |
-| `scripts/encode_drawio_url.py` | The CLI is unavailable and you need a browser-fallback diagrams.net URL |
+| `references/diagram-types.md` | ユーザーが特定の図表タイプ（ERD、UML クラス、シーケンス、アーキテクチャ、ML/DL、フローチャート）を指名したとき |
+| `references/style-presets.md` | ユーザーがスタイルプリセットの学習 / 保存 / 一覧 / デフォルト設定 / 削除を求めたとき、またはアクティブなプリセットを解決して適用ルールが必要なとき |
+| `references/style-extraction.md` | Learn フローの中で抽出手順が必要なとき（`style-presets.md` から呼ばれる） |
+| `references/troubleshooting.md` | エクスポートが失敗、ビジョンが PNG を拒否、またはレンダリングが間違って見えるとき |
+| `scripts/repair_png.py` | すべての `-e` PNG エクスポートの後 — draw.io の切り詰められた IEND チャンクを修正（issue #8） |
+| `scripts/encode_drawio_url.py` | CLI が利用不可で、ブラウザフォールバックの diagrams.net URL が必要なとき |
 
-## Prerequisites
+## 前提条件
 
-The draw.io desktop app must be installed and the CLI accessible:
+draw.io デスクトップアプリがインストールされ、CLI にアクセス可能であること：
 
-**macOS sandbox / sandbox isolation note (e.g., codex.app):** In some sandboxed macOS environments, invoking the draw.io desktop CLI (even `draw.io --version`) can crash the draw.io process or produce no output. If that happens, treat the CLI as **unavailable in this sandbox isolation** — do not keep retrying inside the sandbox. Prefer a **non-sandboxed host environment** (outside sandbox isolation) for any CLI export work, or use the browser fallback / XML-only outputs.
+**macOS sandbox / sandbox isolation メモ（例：codex.app）：** 一部のサンドボックス化された macOS 環境では、draw.io デスクトップ CLI を呼び出すと（`draw.io --version` ですら）draw.io プロセスがクラッシュするか、出力が無い場合がある。その場合、CLI を**このサンドボックス分離下では利用不可**として扱う — サンドボックス内でリトライを続けない。CLI エクスポート作業には**サンドボックス化されていないホスト環境**（サンドボックス分離の外）を優先するか、ブラウザフォールバック / XML 専用出力を使う。
 
 ```bash
-# macOS (Homebrew — recommended; CLI binary is `drawio`, not `draw.io`)
+# macOS（Homebrew — 推奨；CLI バイナリは `drawio`、`draw.io` ではない）
 brew install --cask drawio
 drawio --version
 
-# macOS (full path if not in PATH)
+# macOS（PATH に無い場合のフルパス）
 /Applications/draw.io.app/Contents/MacOS/draw.io --version
 
 # Windows
@@ -53,114 +53,114 @@ drawio --version
 draw.io --version
 ```
 
-Install draw.io desktop if missing:
-- macOS: `brew install --cask drawio` or download from https://github.com/jgraph/drawio-desktop/releases
-- Windows: download installer from https://github.com/jgraph/drawio-desktop/releases
-- Linux: download `.deb`/`.rpm` from https://github.com/jgraph/drawio-desktop/releases — **do not use snap** (AppArmor sandbox denies secrets/keyring on servers, causes crash)
+無ければ draw.io デスクトップをインストール：
+- macOS: `brew install --cask drawio` または https://github.com/jgraph/drawio-desktop/releases からダウンロード
+- Windows: https://github.com/jgraph/drawio-desktop/releases からインストーラーをダウンロード
+- Linux: https://github.com/jgraph/drawio-desktop/releases から `.deb`/`.rpm` をダウンロード — **snap を使わない**（AppArmor サンドボックスがサーバー上で secrets/keyring を拒否し、クラッシュの原因になる）
 
-## Workflow
+## ワークフロー
 
-Before starting the workflow, assess whether the user's request is specific enough. If key details are missing, ask 1-3 focused questions:
-- **Diagram type** — which preset? (ERD, UML, Sequence, Architecture, ML/DL, Flowchart, or general)
-- **Output format** — PNG (default), SVG, PDF, or JPG?
-- **Output location** — default is the user's working dir; honor any explicit path the user gives (e.g. "put it in `./artifacts/`"). Don't ask if they didn't mention one.
-- **Scope/fidelity** — how many components? Any specific technologies or labels?
+ワークフローを開始する前に、ユーザーの要求が十分に具体的かを評価する。重要な詳細が欠けている場合、1-3 個の的を絞った質問をする：
+- **図表タイプ** — どのプリセット？（ERD、UML、シーケンス、アーキテクチャ、ML/DL、フローチャート、または一般）
+- **出力フォーマット** — PNG（デフォルト）、SVG、PDF、JPG？
+- **出力場所** — デフォルトはユーザーの作業ディレクトリ；ユーザーが指定した明示的なパスがあればそれを尊重する（例：「`./artifacts/` に置いて」）。言及がなければ尋ねない。
+- **スコープ/忠実度** — コンポーネントはいくつ？特定の技術やラベルはあるか？
 
-Skip clarification if the request already specifies these details or is clearly simple (e.g., "draw a flowchart of X").
+要求がすでにこれらの詳細を指定している、または明らかに単純（例：「X のフローチャートを描いて」）であれば、明確化はスキップする。
 
-**Step 0 — Resolve active preset.** Determine which (if any) user-defined style preset applies to this generation.
+**ステップ 0 — アクティブなプリセットを解決。** この生成に適用される（もしあれば）ユーザー定義のスタイルプリセットを決定する。
 
-- Scan the user's message for a phrase that clearly names a style preset: "use my `<name>` style", "with my `<name>` style", "in `<name>` mode", "in the style of `<name>`". A bare `with <name>` does **not** count — "draw a diagram with redis" names a component, not a style. If a clear match is found → active preset = `<name>`.
-- Else, check `~/.drawio-skill/styles/` for any file with `"default": true`. If found → active preset = that one.
-- Else → no preset active; fall through to the built-in color/shape/edge conventions for the rest of the workflow.
+- ユーザーのメッセージから、スタイルプリセットを明確に名指しするフレーズをスキャン："use my `<name>` style"、"with my `<name>` style"、"in `<name>` mode"、"in the style of `<name>`"。裸の `with <name>` は**カウントしない** — "draw a diagram with redis" はスタイルではなくコンポーネントを名指ししている。明確な一致があれば → アクティブなプリセット = `<name>`。
+- そうでなければ、`~/.drawio-skill/styles/` で `"default": true` のファイルをチェック。あれば → アクティブなプリセット = それ。
+- そうでなければ → アクティブなプリセットなし；ワークフローの残りで組み込みの色/形状/エッジ規約にフォールスルー。
 
-Load the preset JSON from `~/.drawio-skill/styles/<name>.json`, falling back to `<this-skill-dir>/styles/built-in/<name>.json`. If the named preset exists in neither location, tell the user the name is unknown, list the available presets (user dir + built-in), and stop — do **not** silently fall back to defaults.
+プリセット JSON を `~/.drawio-skill/styles/<name>.json` からロード、見つからなければ `<this-skill-dir>/styles/built-in/<name>.json` にフォールバック。指定されたプリセットがどちらの場所にも存在しない場合、ユーザーに名前が不明だと伝え、利用可能なプリセット（ユーザーディレクトリ + 組み込み）を一覧し、停止する — 静かにデフォルトにフォールバック**しない**。
 
-When a preset loads successfully, mention it in the first line of the reply: *"Using preset `<name>` (confidence: `<level>`)."* See the **Applying a preset** subsection below for how the preset changes color/shape/edge/font decisions.
+プリセットが正常にロードされたら、返信の最初の行で言及する：*"Using preset `<name>` (confidence: `<level>`)."* プリセットが色/形状/エッジ/フォントの決定をどう変えるかは、下の **Applying a preset** サブセクションを参照。
 
-1. **Check deps** — verify `draw.io --version` succeeds; note platform for correct CLI path
-2. **Plan** — identify shapes, relationships, layout (LR or TB), group by tier/layer
-3. **Generate** — write `.drawio` XML file to disk. Default output dir is the user's working dir; if the user specified an output path or directory (e.g. `./artifacts/`, `docs/images/`), use that instead — `mkdir -p` the target dir first. Apply the same dir choice to PNG/SVG/PDF exports in steps 4 and 7.
-4. **Export draft** — run CLI to produce a preview PNG. **Do NOT pass `-e`** at this step — the embedded `zTXt mxGraphModel` chunk it adds causes vision APIs (Claude included) to return 400 "Could not process image" in step 5. Save the clean preview as `<name>.png` (single extension). Embedding is for the final export only (step 7).
-5. **Self-check** — use the agent's built-in vision capability to read the exported PNG, catch obvious issues, auto-fix before showing user (requires a vision-enabled model such as Claude Sonnet/Opus). If reading the PNG returns a 400 / "Could not process image" error, you almost certainly exported with `-e` by mistake — re-export without `-e` and retry once. If it still fails, skip self-check and continue to step 6.
-6. **Review loop** — show image to user, collect feedback, apply targeted XML edits, re-export, repeat until approved
-7. **Final export** — re-export the approved version to all requested formats. Use `-e` here (PNG/SVG/PDF) so the deliverable stays editable in draw.io; save as `<name>.drawio.png` to signal embedded XML. **For PNG with `-e`, run `python3 <this-skill-dir>/scripts/repair_png.py <name>.drawio.png` immediately after** — draw.io's CLI truncates the IEND chunk in `-e` PNG output (8 bytes missing), producing a corrupt file that vision APIs and strict PNG decoders reject (issue #8). Report file paths.
+1. **依存関係をチェック** — `draw.io --version` が成功することを確認；正しい CLI パスのためにプラットフォームをメモ
+2. **計画** — 形状、関係、レイアウト（LR または TB）を特定、階層/レイヤーでグループ化
+3. **生成** — `.drawio` XML ファイルをディスクに書く。デフォルトの出力ディレクトリはユーザーの作業ディレクトリ；ユーザーが出力パスやディレクトリ（例：`./artifacts/`、`docs/images/`）を指定した場合はそれを使う — まず対象ディレクトリを `mkdir -p`。ステップ 4 と 7 の PNG/SVG/PDF エクスポートにも同じディレクトリ選択を適用。
+4. **ドラフトをエクスポート** — CLI を実行してプレビュー PNG を生成。**このステップで `-e` を渡さない** — それが追加する埋め込まれた `zTXt mxGraphModel` チャンクは、ビジョン API（Claude を含む）でステップ 5 の 400 "Could not process image" を返す原因になる。クリーンなプレビューを `<name>.png`（単一拡張子）として保存。埋め込みは最終エクスポートのみ（ステップ 7）。
+5. **セルフチェック** — エージェントの組み込みビジョン機能を使ってエクスポートされた PNG を読み、明らかな問題を捕らえ、ユーザーに見せる前に自動修正する（Claude Sonnet/Opus のようなビジョン対応モデルが必要）。PNG の読み取りが 400 / "Could not process image" エラーを返した場合、ほぼ確実に誤って `-e` でエクスポートした — `-e` 無しで再エクスポートし、一度リトライ。それでも失敗したら、セルフチェックをスキップしてステップ 6 へ続行。
+6. **レビューループ** — ユーザーに画像を見せ、フィードバックを集め、的を絞った XML 編集を適用し、再エクスポートし、承認されるまで繰り返す
+7. **最終エクスポート** — 承認版をすべての要求されたフォーマットに再エクスポート。ここで `-e` を使う（PNG/SVG/PDF）ので、成果物は draw.io で編集可能なまま；埋め込まれた XML を示すために `<name>.drawio.png` として保存。**`-e` 付きの PNG の場合、その直後に `python3 <this-skill-dir>/scripts/repair_png.py <name>.drawio.png` を実行** — draw.io の CLI は `-e` PNG 出力で IEND チャンクを切り詰める（8 バイト欠落）、その結果、ビジョン API と厳密な PNG デコーダが拒否する破損ファイルを生成する（issue #8）。ファイルパスを報告。
 
-**If `draw.io --version` crashes or prints nothing (common in restricted macOS sandbox isolation like codex.app):**
-- Do not keep retrying CLI invocations inside the sandbox.
-- Skip steps 4, 5, 6, and 7 (CLI export + PNG-based review) and use **Browser fallback** (`scripts/encode_drawio_url.py`) or deliver the `.drawio` XML only.
-- If the user needs PNG/SVG/PDF outputs, ask them to run the export commands in a **non-sandboxed host environment** (outside sandbox isolation) and share the resulting files.
+**`draw.io --version` がクラッシュするか何も出力しない場合（codex.app のような制限された macOS sandbox isolation で一般的）：**
+- サンドボックス内で CLI 呼び出しのリトライを続けない。
+- ステップ 4、5、6、7（CLI エクスポート + PNG ベースのレビュー）をスキップし、**ブラウザフォールバック**（`scripts/encode_drawio_url.py`）を使うか `.drawio` XML のみを提供する。
+- ユーザーが PNG/SVG/PDF 出力を必要とする場合、**サンドボックス化されていないホスト環境**（サンドボックス分離の外）でエクスポートコマンドを実行し、結果のファイルを共有するよう依頼する。
 
-Escalation rule:
-- If the binary exists on PATH (or known app path exists) but execution fails with abnormal exit, empty output, Electron startup failure, display/session error, or likely sandbox restriction, prefer one escalated retry before falling back.
-- If the binary is missing entirely, do not escalate just to search more aggressively; go to install guidance or fallback.
+エスカレーションルール：
+- バイナリが PATH（または既知のアプリパス）に存在するが、実行が異常終了、空出力、Electron 起動失敗、ディスプレイ/セッションエラー、またはサンドボックス制限の可能性で失敗する場合、フォールバックの前に 1 回のエスカレーションリトライを優先する。
+- バイナリが完全に欠落している場合、より積極的に検索するためにエスカレーションしない；インストールガイダンスまたはフォールバックに進む。
 
-### Step 5: Self-Check
+### ステップ 5：セルフチェック
 
-After exporting the draft PNG, use the agent's vision capability (e.g., Claude's image input) to read the image and check for these issues before showing the user. If the agent does not support vision, skip self-check and show the PNG directly.
+ドラフト PNG をエクスポートした後、エージェントのビジョン機能（例：Claude の画像入力）を使って画像を読み、ユーザーに見せる前にこれらの問題をチェックする。エージェントがビジョンをサポートしない場合、セルフチェックをスキップし、直接 PNG を表示する。
 
-**Important:** the draft PNG read here must have been exported **without** `-e`. Draw.io's `-e` flag emits a PNG with a truncated IEND chunk (8 bytes of type+CRC missing) that the Anthropic vision API rejects with 400 "Could not process image" (issue #8). The simplest fix for the preview step is to skip `-e` entirely; the final export in step 7 keeps `-e` and runs the repair snippet. If you see the 400 error here, re-export without `-e` and retry once; if it still fails (any other reason), skip self-check and proceed to step 6.
+**重要：** ここで読まれるドラフト PNG は `-e` **無し**でエクスポートされていなければならない。Draw.io の `-e` フラグは、Anthropic ビジョン API が 400 "Could not process image" で拒否する切り詰められた IEND チャンク（type+CRC の 8 バイトが欠落）を持つ PNG を出力する（issue #8）。プレビューステップの最も単純な修正は `-e` を完全にスキップすること；ステップ 7 の最終エクスポートは `-e` を保持し、修復スニペットを実行する。ここで 400 エラーを見たら、`-e` 無しで再エクスポートし一度リトライ；それでも失敗（他の理由）なら、セルフチェックをスキップしてステップ 6 に進む。
 
-| Check | What to look for | Auto-fix action |
+| チェック | 探すもの | 自動修正アクション |
 |-------|-----------------|-----------------|
-| Overlapping shapes | Two or more shapes stacked on top of each other | Shift shapes apart by ≥200px |
-| Clipped labels | Text cut off at shape boundaries | Increase shape width/height to fit label |
-| Missing connections | Arrows that don't visually connect to shapes | Verify `source`/`target` ids match existing cells |
-| Off-canvas shapes | Shapes at negative coordinates or far from the main group | Move to positive coordinates near the cluster |
-| Edge-shape overlap | An edge/arrow visually crosses through an unrelated shape | Add waypoints (`<Array as="points">`) to route around the shape, or increase spacing between shapes |
-| Stacked edges | Multiple edges overlap each other on the same path | Distribute entry/exit points across the shape perimeter (use different exitX/entryX values) |
+| 重なり合う形状 | 2 つ以上の形状が積み重なっている | 形状を ≥200px シフトして離す |
+| クリップされたラベル | テキストが形状境界で切れている | ラベルに合わせて形状の幅/高さを増やす |
+| 欠落した接続 | 視覚的に形状に接続しない矢印 | `source`/`target` の id が既存のセルと一致することを確認 |
+| キャンバス外の形状 | 負の座標、またはメイングループから遠い位置の形状 | クラスター近くの正の座標に移動 |
+| エッジと形状の重なり | エッジ/矢印が無関係な形状を視覚的に貫通 | ウェイポイント（`<Array as="points">`）を追加して形状を回避、または形状間のスペーシングを増やす |
+| エッジのスタッキング | 複数のエッジが同じパス上で互いに重なる | 形状の周辺上にエントリー/エグジット点を分散（異なる exitX/entryX 値を使用） |
 
-- Max **2 self-check rounds** — if issues remain after 2 fixes, show the user anyway
-- Re-export after each fix and re-read the new PNG
+- 最大**2 回のセルフチェックラウンド** — 2 回の修正後も問題が残るなら、それでもユーザーに見せる
+- 各修正後に再エクスポートして、新しい PNG を読み直す
 
-### Step 6: Review Loop
+### ステップ 6：レビューループ
 
-After self-check, show the exported image and ask the user for feedback.
+セルフチェックの後、エクスポートされた画像を表示し、ユーザーにフィードバックを求める。
 
-**Targeted edit rules** — for each type of feedback, apply the minimal XML change:
+**ターゲット編集ルール** — 各タイプのフィードバックに対して、最小限の XML 変更を適用する：
 
-| User request | XML edit action |
+| ユーザーの要求 | XML 編集アクション |
 |-------------|----------------|
-| Change color of X | Find `mxCell` by `value` matching X, update `fillColor`/`strokeColor` in `style` |
-| Add a new node | Append a new `mxCell` vertex with next available `id`, position near related nodes |
-| Remove a node | Delete the `mxCell` vertex and any edges with matching `source`/`target` |
-| Move shape X | Update `x`/`y` in the `mxGeometry` of the matching `mxCell` |
-| Resize shape X | Update `width`/`height` in the `mxGeometry` of the matching `mxCell` |
-| Add arrow from A to B | Append a new `mxCell` edge with `source`/`target` matching A and B ids |
-| Change label text | Update the `value` attribute of the matching `mxCell` |
-| Change layout direction | **Full regeneration** — rebuild XML with new orientation |
+| X の色を変更 | `value` が X と一致する `mxCell` を見つけ、`style` の `fillColor`/`strokeColor` を更新 |
+| 新しいノードを追加 | 次に利用可能な `id` で新しい `mxCell` 頂点を追加し、関連ノードの近くに配置 |
+| ノードを削除 | `mxCell` 頂点と、一致する `source`/`target` を持つエッジを削除 |
+| 形状 X を移動 | 一致する `mxCell` の `mxGeometry` の `x`/`y` を更新 |
+| 形状 X をリサイズ | 一致する `mxCell` の `mxGeometry` の `width`/`height` を更新 |
+| A から B への矢印を追加 | A と B の id に一致する `source`/`target` を持つ新しい `mxCell` エッジを追加 |
+| ラベルテキストを変更 | 一致する `mxCell` の `value` 属性を更新 |
+| レイアウト方向を変更 | **完全な再生成** — 新しい方向で XML を再構築 |
 
-**Rules:**
-- For single-element changes: edit existing XML in place — preserves layout tuning from prior iterations
-- For layout-wide changes (e.g., swap LR↔TB, "start over"): regenerate full XML
-- Overwrite the same `{name}.png` (no `-e`) each iteration — do not create `v1`, `v2`, `v3` files. `-e` is reserved for the final export in step 7.
-- After applying edits, re-export and show the updated image
-- Loop continues until user says approved / done / LGTM
-- **Safety valve:** after 5 iteration rounds, suggest the user open the `.drawio` file in draw.io desktop for fine-grained adjustments
+**ルール：**
+- 単一要素の変更：既存の XML をその場で編集 — 以前のイテレーションのレイアウト調整を保持する
+- レイアウト全体の変更（例：LR↔TB を入れ替え、「やり直し」）：完全な XML を再生成する
+- 各イテレーションで同じ `{name}.png`（`-e` 無し）を上書き — `v1`、`v2`、`v3` ファイルを作らない。`-e` はステップ 7 の最終エクスポート専用。
+- 編集を適用したら、再エクスポートして更新された画像を表示
+- ユーザーが承認 / 完了 / LGTM と言うまでループは続く
+- **安全弁：** 5 イテレーションラウンドの後、ユーザーに draw.io デスクトップで `.drawio` ファイルを開いて細かい調整をすることを提案
 
-### Step 7: Final Export
+### ステップ 7：最終エクスポート
 
-Once the user approves:
-- Export to all requested formats (PNG, SVG, PDF, JPG) — default to PNG if not specified
-- Report file paths for both the `.drawio` source file and exported image(s)
-- **Auto-launch:** offer to open the `.drawio` file in draw.io desktop for fine-tuning — `open diagram.drawio` (macOS), `xdg-open` (Linux), `start` (Windows)
-- Confirm files are saved and ready to use
+ユーザーが承認したら：
+- 要求されたすべてのフォーマット（PNG、SVG、PDF、JPG）にエクスポート — 指定がなければデフォルトで PNG
+- `.drawio` ソースファイルとエクスポートされた画像（複数の場合あり）の両方のファイルパスを報告
+- **自動起動：** draw.io デスクトップで `.drawio` ファイルを開いて微調整することを提案 — `open diagram.drawio`（macOS）、`xdg-open`（Linux）、`start`（Windows）
+- ファイルが保存され使用可能であることを確認
 
-## Style Presets
+## スタイルプリセット
 
-A **style preset** is a named JSON file capturing a user's visual preferences (palette, shapes, font, edges). When active, it fully replaces the built-in color/shape conventions in this skill.
+**スタイルプリセット**は、ユーザーのビジュアル設定（パレット、形状、フォント、エッジ）を捕捉した名前付き JSON ファイル。アクティブな場合、このスキルの組み込みの色/形状規約を完全に置き換える。
 
-**Lookup order** when SKILL.md's step 0.5 resolves a preset name:
-1. `~/.drawio-skill/styles/<name>.json` — user presets (survive `git pull`)
-2. `<this-skill-dir>/styles/built-in/<name>.json` — shipped built-ins (`default`, `corporate`, `handdrawn`)
+SKILL.md のステップ 0.5 がプリセット名を解決するときの**検索順序**：
+1. `~/.drawio-skill/styles/<name>.json` — ユーザープリセット（`git pull` で残る）
+2. `<this-skill-dir>/styles/built-in/<name>.json` — 同梱の組み込み（`default`、`corporate`、`handdrawn`）
 
-Always lowercase the user-provided name before any file operation — the schema enforces lowercase.
+ファイル操作の前に常にユーザー提供の名前を小文字にする — スキーマは小文字を強制する。
 
-**For everything else — Learn flow (extracting a preset from a file), management ops (list/default/delete/rename), application rules (color lookup, shape keywords, edges, fonts, extras, interaction with diagram-type presets), and validation — read `references/style-presets.md`.** It's only needed when the user invokes those flows or when an active preset must be applied to the current generation.
+**その他のすべて — Learn フロー（ファイルからのプリセット抽出）、管理操作（一覧/デフォルト/削除/名前変更）、適用ルール（色検索、形状キーワード、エッジ、フォント、エクストラ、図表タイププリセットとの相互作用）、検証 — については `references/style-presets.md` を読むこと。** ユーザーがこれらのフローを呼び出したとき、または現在の生成にアクティブなプリセットを適用しなければならないときにのみ必要。
 
-## Draw.io XML Structure
+## Draw.io XML 構造
 
-### File skeleton
+### ファイルスケルトン
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -177,28 +177,28 @@ Always lowercase the user-provided name before any file operation — the schema
 </mxfile>
 ```
 
-**Rules:**
-- `id="0"` and `id="1"` are required root cells — never omit them
-- User shapes start at `id="2"` and increment sequentially
-- All shapes have `parent="1"` (unless inside a container — then use container's id)
-- All text uses `html=1` in style for proper rendering
-- **Never use `--` inside XML comments** — it's illegal per XML spec and causes parse errors
-- Escape special characters in attribute values: `&amp;`, `&lt;`, `&gt;`, `&quot;`
-- **Multi-line text in labels:** use `&#xa;` for line breaks inside `value` attributes (not literal `\n`). Example: `value="Line 1&#xa;Line 2"`
+**ルール：**
+- `id="0"` と `id="1"` は必須のルートセル — 絶対に省略しない
+- ユーザーの形状は `id="2"` から始まり、順次インクリメント
+- すべての形状は `parent="1"` を持つ（コンテナ内の場合を除く — その場合はコンテナの id を使用）
+- 適切なレンダリングのためにすべてのテキストはスタイルに `html=1` を使用
+- **XML コメント内で `--` を絶対に使わない** — XML 仕様で違法でパースエラーを引き起こす
+- 属性値の特殊文字をエスケープ：`&amp;`、`&lt;`、`&gt;`、`&quot;`
+- **ラベル内の複数行テキスト：** `value` 属性内の改行には `&#xa;` を使う（リテラル `\n` ではない）。例：`value="Line 1&#xa;Line 2"`
 
-### Shape types (vertex)
+### 形状タイプ（頂点）
 
-| Style keyword | Use for |
+| スタイルキーワード | 用途 |
 |--------------|---------|
-| `rounded=0` | plain rectangle (default) |
-| `rounded=1` | rounded rectangle — services, modules |
-| `ellipse;` | circles/ovals — start/end, databases |
-| `rhombus;` | diamond — decision points |
-| `shape=mxgraph.aws4.resourceIcon;` | AWS icons |
-| `shape=cylinder3;` | cylinder — databases |
-| `swimlane;` | group/container with title bar |
+| `rounded=0` | 普通の矩形（デフォルト） |
+| `rounded=1` | 角丸矩形 — サービス、モジュール |
+| `ellipse;` | 円/楕円 — 開始/終了、データベース |
+| `rhombus;` | ひし形 — ディシジョンポイント |
+| `shape=mxgraph.aws4.resourceIcon;` | AWS アイコン |
+| `shape=cylinder3;` | 円柱 — データベース |
+| `swimlane;` | タイトルバー付きグループ/コンテナ |
 
-### Required properties
+### 必須プロパティ
 
 ```xml
 <!-- Rectangle / rounded box -->
@@ -217,19 +217,19 @@ Always lowercase the user-provided name before any file operation — the schema
 </mxCell>
 ```
 
-### Containers and groups
+### コンテナとグループ
 
-For architecture diagrams with nested elements, use draw.io's parent-child containment — do **not** just place shapes on top of larger shapes.
+ネストされた要素を持つアーキテクチャ図には、draw.io の親子包含を使う — より大きな形状の上に形状を置くだけでは**ない**。
 
-| Type | Style | When to use |
+| タイプ | スタイル | 使うとき |
 |------|-------|-------------|
-| **Group** (invisible) | `group;pointerEvents=0;` | No visual border needed, container has no connections |
-| **Swimlane** (titled) | `swimlane;startSize=30;` | Container needs a visible title bar, or container itself has connections |
-| **Custom container** | Add `container=1;pointerEvents=0;` to any shape | Any shape acting as a container without its own connections |
+| **グループ**（不可視） | `group;pointerEvents=0;` | 可視のボーダーが不要、コンテナに接続が無い |
+| **スイムレーン**（タイトル付き） | `swimlane;startSize=30;` | コンテナに可視のタイトルバーが必要、またはコンテナ自体に接続がある |
+| **カスタムコンテナ** | 任意の形状に `container=1;pointerEvents=0;` を追加 | 自身の接続を持たないコンテナとして機能する任意の形状 |
 
-**Key rules:**
-- Add `pointerEvents=0;` to container styles that should not capture connections between children
-- Children set `parent="containerId"` and use coordinates **relative to the container**
+**主要ルール：**
+- 子の間の接続を捕らえないコンテナのスタイルに `pointerEvents=0;` を追加
+- 子は `parent="containerId"` を設定し、**コンテナに対して相対的な**座標を使う
 
 ```xml
 <!-- Swimlane container -->
@@ -245,9 +245,9 @@ For architecture diagrams with nested elements, use draw.io's parent-child conta
 </mxCell>
 ```
 
-### Connector (edge)
+### コネクター（エッジ）
 
-**CRITICAL:** Every edge `mxCell` must contain a `<mxGeometry relative="1" as="geometry" />` child element. Self-closing edge cells (`<mxCell ... edge="1" ... />`) are **invalid** and will not render. Always use the expanded form.
+**重要：** 各エッジの `mxCell` は子要素 `<mxGeometry relative="1" as="geometry" />` を含まなければならない。自己閉じのエッジセル（`<mxCell ... edge="1" ... />`）は**不正**でレンダリングされない。常に展開形式を使う。
 
 ```xml
 <!-- Directed arrow — always include rounded, orthogonalLoop, jettySize for clean routing -->
@@ -270,81 +270,81 @@ For architecture diagrams with nested elements, use draw.io's parent-child conta
 </mxCell>
 ```
 
-**Edge style rules:**
-- **Animated connectors:** add `flowAnimation=1;` to any edge style to show a moving dot animation along the arrow. Works in SVG export and draw.io desktop — ideal for data-flow and pipeline diagrams. Example: `style="edgeStyle=orthogonalEdgeStyle;flowAnimation=1;rounded=1;..."`
-- **Always** include `rounded=1;orthogonalLoop=1;jettySize=auto` — these enable smart routing that avoids overlaps
-- Pin `exitX/exitY/entryX/entryY` on every edge when a node has 2+ connections — distributes lines across the shape perimeter
-- Add `<Array as="points">` waypoints when an edge must detour around an intermediate shape
-- **Leave room for arrowheads:** the final straight segment between the last bend and the target shape must be ≥20px long. If too short, the arrowhead overlaps the bend and looks broken. Fix by increasing node spacing or adding explicit waypoints
+**エッジスタイルルール：**
+- **アニメーションコネクター：** 矢印に沿って動くドットのアニメーションを表示するには、任意のエッジスタイルに `flowAnimation=1;` を追加する。SVG エクスポートと draw.io デスクトップで動作 — データフローとパイプライン図に最適。例：`style="edgeStyle=orthogonalEdgeStyle;flowAnimation=1;rounded=1;..."`
+- **常に**`rounded=1;orthogonalLoop=1;jettySize=auto` を含める — これらは重なりを回避するスマートルーティングを有効にする
+- ノードが 2 つ以上の接続を持つときは、各エッジに `exitX/exitY/entryX/entryY` を固定 — 形状の周辺に線を分散する
+- エッジが中間の形状を迂回しなければならないときは `<Array as="points">` ウェイポイントを追加
+- **矢印の頭部のスペースを残す：** 最後の曲がりとターゲット形状の間の最終の直線セグメントは ≥20px の長さでなければならない。短すぎると、矢印の頭部が曲がりと重なり、壊れて見える。ノード間のスペーシングを増やすか、明示的なウェイポイントを追加して修正
 
-### Distributing connections on a shape
+### 形状上の接続の分散
 
-When multiple edges connect to the same shape, assign different entry/exit points to prevent stacking:
+複数のエッジが同じ形状に接続するとき、スタッキングを防ぐために異なるエントリー/エグジット点を割り当てる：
 
-| Position | exitX/entryX | exitY/entryY | Use when |
+| 位置 | exitX/entryX | exitY/entryY | 使うとき |
 |----------|-------------|-------------|----------|
-| Top center | 0.5 | 0 | connecting to node above |
-| Top-left | 0.25 | 0 | 2nd connection from top |
-| Top-right | 0.75 | 0 | 3rd connection from top |
-| Right center | 1 | 0.5 | connecting to node on right |
-| Bottom center | 0.5 | 1 | connecting to node below |
-| Left center | 0 | 0.5 | connecting to node on left |
+| 上中央 | 0.5 | 0 | 上のノードに接続するとき |
+| 左上 | 0.25 | 0 | 上からの 2 番目の接続 |
+| 右上 | 0.75 | 0 | 上からの 3 番目の接続 |
+| 右中央 | 1 | 0.5 | 右のノードに接続するとき |
+| 下中央 | 0.5 | 1 | 下のノードに接続するとき |
+| 左中央 | 0 | 0.5 | 左のノードに接続するとき |
 
-**Rule:** if a shape has N connections on one side, space them evenly (e.g., 3 connections on bottom → exitX = 0.25, 0.5, 0.75)
+**ルール：** 形状が一辺に N 個の接続を持つ場合、それらを均等に配置する（例：底辺の 3 個の接続 → exitX = 0.25、0.5、0.75）
 
-### Color palette (fillColor / strokeColor)
+### カラーパレット（fillColor / strokeColor）
 
-*Used only when no preset is active (see "Applying a preset" above).*
+*プリセットがアクティブでないときのみ使用される（上の「Applying a preset」を参照）。*
 
-| Color name | fillColor | strokeColor | Use for |
+| 色名 | fillColor | strokeColor | 用途 |
 |-----------|-----------|-------------|---------|
-| Blue | `#dae8fc` | `#6c8ebf` | services, clients |
-| Green | `#d5e8d4` | `#82b366` | success, databases |
-| Yellow | `#fff2cc` | `#d6b656` | queues, decisions |
-| Orange | `#ffe6cc` | `#d79b00` | gateways, APIs |
-| Red/Pink | `#f8cecc` | `#b85450` | errors, alerts |
-| Grey | `#f5f5f5` | `#666666` | external/neutral |
-| Purple | `#e1d5e7` | `#9673a6` | security, auth |
+| 青 | `#dae8fc` | `#6c8ebf` | サービス、クライアント |
+| 緑 | `#d5e8d4` | `#82b366` | 成功、データベース |
+| 黄 | `#fff2cc` | `#d6b656` | キュー、ディシジョン |
+| オレンジ | `#ffe6cc` | `#d79b00` | ゲートウェイ、API |
+| 赤/ピンク | `#f8cecc` | `#b85450` | エラー、アラート |
+| グレー | `#f5f5f5` | `#666666` | 外部/中立 |
+| 紫 | `#e1d5e7` | `#9673a6` | セキュリティ、認証 |
 
-### Layout tips
+### レイアウトのヒント
 
-**Spacing — scale with complexity:**
+**スペーシング — 複雑さに合わせてスケール：**
 
-| Diagram complexity | Nodes | Horizontal gap | Vertical gap |
+| 図表の複雑度 | ノード数 | 水平方向のギャップ | 垂直方向のギャップ |
 |-------------------|-------|----------------|--------------|
-| Simple | ≤5 | 200px | 150px |
-| Medium | 6–10 | 280px | 200px |
-| Complex | >10 | 350px | 250px |
+| シンプル | ≤5 | 200px | 150px |
+| 中 | 6–10 | 280px | 200px |
+| 複雑 | >10 | 350px | 250px |
 
-**Routing corridors:** between shape rows/columns, leave an extra ~80px empty corridor where edges can route without crossing shapes. Never place a shape in a gap that edges need to traverse.
+**ルーティングコリドー：** 形状の行/列の間に、エッジが形状を横切らずにルーティングできる ~80px の追加の空きコリドーを残す。エッジが横切る必要のあるギャップに形状を置かない。
 
-**Grid alignment:** snap all `x`, `y`, `width`, `height` values to **multiples of 10** — this ensures shapes align cleanly on draw.io's default grid and makes manual editing easier.
+**グリッド整列：** すべての `x`、`y`、`width`、`height` の値を **10 の倍数**にスナップする — これにより draw.io のデフォルトグリッド上で形状がきれいに整列し、手動編集が容易になる。
 
-**General rules:**
-- Plan a grid before assigning x/y coordinates — sketch node positions on paper/mentally first
-- Group related nodes in the same horizontal or vertical band
-- Use `swimlane` cells for logical grouping with visible borders
-- Place heavily-connected "hub" nodes centrally so edges radiate outward instead of crossing
-- To force straight vertical connections, pin entry/exit points explicitly on edges:
+**一般ルール：**
+- x/y 座標を割り当てる前にグリッドを計画する — まず紙/頭の中でノードの位置をスケッチ
+- 関連するノードを同じ水平または垂直のバンドにグループ化する
+- 可視ボーダー付きの論理的グルーピングには `swimlane` セルを使う
+- 接続が多いハブノードを中央に配置 — エッジが交差する代わりに外側に放射する
+- 強制的にまっすぐな垂直接続にするには、エッジに明示的にエントリー/エグジット点を固定：
   `exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0`
-- Always center-align a child node under its parent (same center x) to avoid diagonal routing
-- **Event bus pattern**: place Kafka/bus nodes in the **center of the service row**, not below — services on either side can reach it with short horizontal arrows (`exitX=1` left side, `exitX=0` right side), eliminating all line crossings
-- Horizontal connections (`exitX=1` or `exitX=0`) never cross vertical nodes in the same row; use them for peer-to-peer and publish connections
+- 斜めルーティングを避けるため、常に親の下に子ノードを中央揃え（同じ中心 x）にする
+- **イベントバスパターン**：Kafka/バスノードを下ではなく**サービス行の中央**に置く — 両側のサービスは短い水平矢印で到達できる（左側は `exitX=1`、右側は `exitX=0`）、すべての線交差を排除
+- 水平接続（`exitX=1` または `exitX=0`）は同じ行の垂直ノードを横切らない；ピアツーピアおよびパブリッシュ接続にこれらを使う
 
-**Avoiding edge-shape overlap:**
-- Before finalizing coordinates, trace each edge path mentally — if it must cross an unrelated shape, either move the shape or add waypoints
-- For tree/hierarchical layouts: assign nodes to layers (rows), connect only between adjacent layers to minimize crossings
-- For star/hub layouts: place the hub center, satellites around it — edges stay short and radial
-- When an edge must span multiple rows/columns, route it along the outer corridor, not through the middle of the diagram
+**エッジと形状の重なりを避ける：**
+- 座標を最終化する前に、各エッジパスを頭の中でたどる — 無関係な形状を横切らなければならないなら、形状を移動するかウェイポイントを追加
+- ツリー/階層レイアウトの場合：ノードをレイヤー（行）に割り当て、隣接するレイヤー間のみ接続して交差を最小化
+- スター/ハブレイアウトの場合：ハブを中央に、衛星をその周りに置く — エッジは短く放射状に
+- エッジが複数の行/列にまたがらなければならない場合、図表の中央を通さず、外側のコリドーに沿ってルーティングする
 
-## Export
+## エクスポート
 
-### Commands
+### コマンド
 
-There are **two** export modes:
+エクスポートには**2 つ**のモードがある：
 
-- **Preview / self-check** (step 4 of the workflow) — no `-e`. Output `diagram.png`. Required for vision self-check; using `-e` here triggers a 400 "Could not process image" error from the vision API (issue #8).
-- **Final / deliverable** (step 7) — pass `-e`. Output `diagram.drawio.png`. The embedded XML keeps the file editable in draw.io.
+- **プレビュー / セルフチェック**（ワークフローのステップ 4）— `-e` 無し。出力 `diagram.png`。ビジョンセルフチェックに必要；ここで `-e` を使うとビジョン API から 400 "Could not process image" エラーが返ってくる（issue #8）。
+- **最終 / 成果物**（ステップ 7）— `-e` を渡す。出力 `diagram.drawio.png`。埋め込まれた XML により draw.io でファイルが編集可能なまま。
 
 ```bash
 # Preview PNG (use this in step 4, before self-check) — NO -e
@@ -376,52 +376,52 @@ draw.io -x -f pdf -e -o diagram.pdf input.drawio
 mkdir -p ./artifacts && draw.io -x -f png -e -s 2 -o ./artifacts/diagram.drawio.png input.drawio
 ```
 
-### Post-export PNG repair (required after `-e` PNG export)
+### エクスポート後の PNG 修復（`-e` PNG エクスポート後に必須）
 
-draw.io CLI truncates the IEND chunk when emitting `-e` PNGs — the file ends with the 4-byte IEND length field but the `IEND` type + CRC (8 bytes) are missing. Result: vision APIs return 400 "Could not process image" and strict PNG decoders error out. SVG/PDF are unaffected.
+draw.io CLI は `-e` PNG を出すときに IEND チャンクを切り詰める — ファイルは 4 バイトの IEND 長さフィールドで終わるが、`IEND` タイプ + CRC（8 バイト）が欠落している。結果：ビジョン API は 400 "Could not process image" を返し、厳密な PNG デコーダはエラーを出す。SVG/PDF には影響なし。
 
-Run this immediately after every `-e` PNG export:
+すべての `-e` PNG エクスポートの直後にこれを実行：
 
 ```bash
 python3 <this-skill-dir>/scripts/repair_png.py diagram.drawio.png
 ```
 
-The script's `endswith(IEND)` guard makes it a no-op once draw.io fixes the bug upstream — safe to run unconditionally.
+スクリプトの `endswith(IEND)` ガードにより、draw.io が上流でバグを修正したら no-op になる — 無条件で実行しても安全。
 
-**Key flags:**
-- `-x` — export mode (required)
-- `-f` — format: `png`, `svg`, `pdf`, `jpg`
-- `-e` — embed diagram XML in output (PNG, SVG, PDF) — exported file remains editable in draw.io. **Skip for the preview PNG used in step 5 self-check** — `-e` PNGs have a truncated IEND chunk that vision APIs reject (issue #8). For final PNG export, keep `-e` and run `scripts/repair_png.py` (see Post-export PNG repair). SVG/PDF unaffected.
-- `-s` — scale: `1`, `2`, `3` (2 recommended for PNG)
-- `-o` — output file path; accepts any directory (e.g. `./artifacts/diagram.drawio.png`) — `mkdir -p` the target dir first. Use `.drawio.png` double extension when embedding.
-- `-b` — border width around diagram (default: 0, recommend 10)
-- `-t` — transparent background (PNG only)
-- `--page-index 0` — export specific page (default: all)
+**主要フラグ：**
+- `-x` — エクスポートモード（必須）
+- `-f` — フォーマット：`png`、`svg`、`pdf`、`jpg`
+- `-e` — 出力に図表 XML を埋め込む（PNG、SVG、PDF）— エクスポートされたファイルが draw.io で編集可能なまま。**ステップ 5 のセルフチェックで使われるプレビュー PNG ではスキップ** — `-e` PNG は切り詰められた IEND チャンクを持ち、ビジョン API が拒否する（issue #8）。最終 PNG エクスポートでは `-e` を保持し、`scripts/repair_png.py` を実行（エクスポート後 PNG 修復を参照）。SVG/PDF には影響なし。
+- `-s` — スケール：`1`、`2`、`3`（PNG は 2 を推奨）
+- `-o` — 出力ファイルパス；任意のディレクトリを受け付ける（例：`./artifacts/diagram.drawio.png`）— まず対象ディレクトリを `mkdir -p`。埋め込み時は `.drawio.png` の二重拡張子を使う。
+- `-b` — 図表の周りのボーダー幅（デフォルト：0、10 を推奨）
+- `-t` — 透明背景（PNG のみ）
+- `--page-index 0` — 特定のページをエクスポート（デフォルト：すべて）
 
-### Browser fallback (no CLI needed)
+### ブラウザフォールバック（CLI 不要）
 
-When the draw.io desktop CLI is unavailable, generate a client-side viewer URL:
+draw.io デスクトップ CLI が利用不可のとき、クライアント側ビューワー URL を生成する：
 
 ```bash
 python3 <this-skill-dir>/scripts/encode_drawio_url.py input.drawio
 ```
 
-Prints a `https://viewer.diagrams.net/...` URL with the diagram XML deflate-compressed and base64-encoded into the URL fragment. The fragment (after `#`) is never sent to the server, so nothing is uploaded — the diagram opens client-side for viewing and editing. Useful when the user cannot install the desktop app.
+URL フラグメントに deflate 圧縮および base64 エンコードされた図表 XML を含む `https://viewer.diagrams.net/...` URL を出力する。フラグメント（`#` の後）はサーバーに送信されないため、何もアップロードされない — 図表はクライアント側で表示および編集のために開かれる。ユーザーがデスクトップアプリをインストールできないときに便利。
 
-### Fallback chain
+### フォールバックチェイン
 
-When tools are unavailable, degrade gracefully:
+ツールが利用不可のとき、丁寧に格下げする：
 
-| Scenario | Behavior |
+| シナリオ | 振る舞い |
 |----------|----------|
-| draw.io CLI missing, Python available | Use browser fallback (diagrams.net URL) |
-| draw.io CLI missing, Python missing | Generate `.drawio` XML only; instruct user to open in draw.io desktop or diagrams.net manually |
-| draw.io CLI crashes / no output in macOS sandbox isolation | Treat CLI as unavailable in-sandbox; use browser fallback / XML-only; ask user to run CLI exports in a non-sandboxed host environment |
-| Vision unavailable for self-check | Skip self-check (step 5); proceed directly to showing user the exported PNG |
-| Export fails (Chromium/display issues) | On Linux, retry with `xvfb-run -a`; if still failing, deliver `.drawio` XML and suggest manual export |
-| Export fails on Linux server (headless) | Try in order: (1) `xvfb-run -a`, (2) append `--no-sandbox` at the very end if root, (3) add `--disable-gpu`, (4) `export HOME=/tmp`, (5) install apt deps (`libgtk-3-0 libnotify4 libnss3 libgbm1 libasound2t64` etc.), (6) fall back to [tomkludy/drawio-renderer](https://hub.docker.com/r/tomkludy/drawio-renderer) Docker (REST API for headless export) |
+| draw.io CLI 欠落、Python 利用可能 | ブラウザフォールバック（diagrams.net URL）を使う |
+| draw.io CLI 欠落、Python 欠落 | `.drawio` XML のみ生成；ユーザーに draw.io デスクトップまたは diagrams.net で手動で開くよう指示 |
+| macOS sandbox isolation で draw.io CLI がクラッシュ / 出力なし | CLI をサンドボックス内で利用不可として扱う；ブラウザフォールバック / XML 専用を使う；ユーザーにサンドボックス化されていないホスト環境で CLI エクスポートを実行するよう依頼 |
+| セルフチェック用のビジョンが利用不可 | セルフチェック（ステップ 5）をスキップ；直接エクスポートされた PNG をユーザーに表示するように進む |
+| エクスポートが失敗（Chromium/ディスプレイの問題） | Linux では `xvfb-run -a` でリトライ；それでも失敗するなら `.drawio` XML を提供し、手動エクスポートを提案 |
+| Linux サーバー（ヘッドレス）でエクスポート失敗 | 順に試す：(1) `xvfb-run -a`、(2) root の場合、最後に `--no-sandbox` を追加、(3) `--disable-gpu` を追加、(4) `export HOME=/tmp`、(5) apt 依存関係をインストール（`libgtk-3-0 libnotify4 libnss3 libgbm1 libasound2t64` など）、(6) [tomkludy/drawio-renderer](https://hub.docker.com/r/tomkludy/drawio-renderer) Docker（ヘッドレスエクスポート用 REST API）にフォールバック |
 
-### Checking if draw.io is in PATH
+### draw.io が PATH にあるかチェック
 
 ```bash
 # Try short command first
@@ -434,21 +434,21 @@ else
 fi
 ```
 
-## Common Mistakes
+## よくある間違い
 
-When something looks wrong (export fails, vision rejects a PNG, layout broken, edges misroute), see `references/troubleshooting.md` for a row-by-row mistake → fix table.
+何かおかしいとき（エクスポート失敗、ビジョンが PNG を拒否、レイアウトが壊れている、エッジのルーティングがおかしい）、行ごとの間違い → 修正のテーブルが `references/troubleshooting.md` にある。
 
-## Diagram Type Presets
+## 図表タイププリセット
 
-When the user requests a specific diagram type, read `references/diagram-types.md` for the matching preset (shapes, edges, layout direction). Pick by user phrasing:
+ユーザーが特定の図表タイプを要求したとき、一致するプリセット（形状、エッジ、レイアウト方向）について `references/diagram-types.md` を読む。ユーザーの言い回しで選ぶ：
 
-| User says | Section in `references/diagram-types.md` |
+| ユーザーが言うこと | `references/diagram-types.md` のセクション |
 |---|---|
-| "ER diagram", "schema diagram", "data model" | ERD |
-| "UML class diagram", "class diagram" | UML Class |
-| "sequence diagram", "interaction diagram", "lifeline" | Sequence |
-| "architecture", "system diagram", "service diagram" | Architecture |
-| "neural network", "model architecture", "ML diagram", "deep learning" | ML / Deep Learning Model |
-| "flowchart", "decision tree", "process flow" | Flowchart |
+| "ER diagram"、"schema diagram"、"data model" | ERD |
+| "UML class diagram"、"class diagram" | UML Class |
+| "sequence diagram"、"interaction diagram"、"lifeline" | Sequence |
+| "architecture"、"system diagram"、"service diagram" | Architecture |
+| "neural network"、"model architecture"、"ML diagram"、"deep learning" | ML / Deep Learning Model |
+| "flowchart"、"decision tree"、"process flow" | Flowchart |
 
-The diagram-type preset sets **structural** style keywords. If a user style preset is also active (see `## Style Presets`), keep the structural keywords and layer color/font/edge/extras on top — read `references/style-presets.md` → "Interaction with diagram-type presets" for the merge rules.
+図表タイププリセットは**構造的**なスタイルキーワードを設定する。ユーザースタイルプリセットもアクティブな場合（`## Style Presets` を参照）、構造的キーワードを保持し、その上に色/フォント/エッジ/エクストラを重ねる — マージルールについては `references/style-presets.md` → "Interaction with diagram-type presets" を読むこと。

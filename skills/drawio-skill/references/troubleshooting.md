@@ -1,25 +1,25 @@
-# Troubleshooting — Common Mistakes
+# トラブルシューティング — よくある間違い
 
-Read this when something looks wrong in the output (rendering, export, layout, edges) or when a CLI invocation fails. Most rows have a one-line fix.
+出力（レンダリング、エクスポート、レイアウト、エッジ）に何かおかしいところがあるとき、または CLI の呼び出しが失敗したときに読んでください。ほとんどの行は 1 行の修正方法を持っています。
 
-| Mistake | Fix |
+| 間違い | 修正方法 |
 |---------|-----|
-| Missing `id="0"` and `id="1"` root cells | Always include both at the top of `<root>` |
-| Shapes not connected | `source` and `target` on edge must match existing shape `id` values |
-| Self-closing edge `mxCell` (`<mxCell ... edge="1" />`) | Use the expanded form with `<mxGeometry relative="1" as="geometry" />` child — self-closing edges won't render |
-| `--` inside XML comments | Illegal per XML spec — use single hyphens or rephrase |
-| Special characters in `value` | Use XML entities: `&amp;` `&lt;` `&gt;` `&quot;` |
-| Literal `\n` in label text | Use `&#xa;` for line breaks in `value` attributes |
-| Overlapping shapes | Scale spacing with complexity (200–350px); leave routing corridors |
-| Edges crossing through shapes | Add waypoints, distribute entry/exit points, or increase spacing |
-| Arrowhead overlaps bend | Final edge segment before target must be ≥20px — increase spacing or add waypoints |
-| Iteration loop never ends | After 5 rounds, suggest user open .drawio in draw.io desktop for fine-tuning |
-| Export command not found on macOS | Try full path `/Applications/draw.io.app/Contents/MacOS/draw.io` |
-| Linux: blank/error output headlessly | Prefix command with `xvfb-run -a` |
-| Linux: `--no-sandbox` placed before input file (parsed as filename) | Move `--no-sandbox` to the very end of the command (drawio-desktop#249, #1056) |
-| Linux: `Failed to get 'appData' path` / `Home directory not accessible` | `export HOME=/tmp` before invoking drawio (drawio-desktop#127) |
-| Linux server: segfault / EGL / MESA `failed to load driver` errors | Add `--disable-gpu` (suppresses Chromium GL init when no GPU available) |
-| PDF export fails | Ensure Chromium is available (draw.io bundles it on desktop) |
-| Background color wrong in CLI export | Known CLI bug; add `--transparent` flag or set background via style |
-| Vision returns 400 "Could not process image" on draft PNG | Re-export the preview without `-e` (issue #8). Root cause is a truncated IEND chunk in `-e` PNGs, not the `zTXt` chunk itself — but skipping `-e` for the preview is the simplest fix. |
-| Final `-e` PNG won't open in image viewers / vision APIs | Run `python3 <this-skill-dir>/scripts/repair_png.py <path>`. draw.io CLI emits `-e` PNGs with an 8-byte truncation at IEND. SVG/PDF unaffected. |
+| `id="0"` と `id="1"` のルートセルが欠落 | 常に `<root>` の先頭に両方含める |
+| 形状が接続されていない | エッジの `source` と `target` は既存の形状の `id` 値と一致しなければならない |
+| 自己閉じエッジ `mxCell`（`<mxCell ... edge="1" />`） | 子要素 `<mxGeometry relative="1" as="geometry" />` を含む展開形式を使う — 自己閉じエッジはレンダリングされない |
+| XML コメント内の `--` | XML 仕様で違反 — 単一ハイフンを使うか言い回しを変える |
+| `value` 内の特殊文字 | XML エンティティを使う：`&amp;` `&lt;` `&gt;` `&quot;` |
+| ラベルテキスト内のリテラル `\n` | `value` 属性内の改行には `&#xa;` を使う |
+| 重なり合う形状 | 複雑度に応じてスペーシングをスケール（200–350px）；ルーティングコリドーを残す |
+| エッジが形状を貫通する | ウェイポイントを追加、エントリー/エグジット点を分散、またはスペーシングを増やす |
+| 矢印先端が曲がりと重なる | ターゲット前の最後のエッジセグメントは ≥20px でなければならない — スペーシングを増やすかウェイポイントを追加 |
+| イテレーションループが終わらない | 5 ラウンド後、ユーザーに draw.io デスクトップで .drawio を開いて微調整するよう提案 |
+| macOS でエクスポートコマンドが見つからない | フルパス `/Applications/draw.io.app/Contents/MacOS/draw.io` を試す |
+| Linux: ヘッドレスで出力が空白/エラー | コマンドの前に `xvfb-run -a` を付ける |
+| Linux: `--no-sandbox` が入力ファイルの前にある（ファイル名としてパースされる） | `--no-sandbox` をコマンドの最後に移動（drawio-desktop#249、#1056） |
+| Linux: `Failed to get 'appData' path` / `Home directory not accessible` | drawio 呼び出し前に `export HOME=/tmp`（drawio-desktop#127） |
+| Linux サーバー: segfault / EGL / MESA `failed to load driver` エラー | `--disable-gpu` を追加（GPU が利用できないときに Chromium GL 初期化を抑制） |
+| PDF エクスポート失敗 | Chromium が利用可能であることを確認（draw.io デスクトップにバンドルされている） |
+| CLI エクスポートで背景色が誤り | 既知の CLI バグ；`--transparent` フラグを追加するかスタイル経由で背景を設定 |
+| ビジョンがドラフト PNG に対し 400 "Could not process image" を返す | `-e` 無しでプレビューを再エクスポート（issue #8）。根本原因は `-e` PNG の IEND チャンク切り詰めであって `zTXt` チャンク自体ではない — ただしプレビューでは `-e` をスキップするのが最もシンプルな修正 |
+| 最終 `-e` PNG が画像ビューア / ビジョン API で開けない | `python3 <this-skill-dir>/scripts/repair_png.py <path>` を実行。draw.io CLI は `-e` PNG で IEND が 8 バイト切り詰められたものを出す。SVG/PDF は影響なし |

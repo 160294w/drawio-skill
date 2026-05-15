@@ -1,34 +1,34 @@
-# Style Extraction — agent reference
+# スタイル抽出 — エージェントリファレンス
 
-Loaded on demand by `SKILL.md` when the user asks to learn a style ("learn my style from `<path>` as `<name>`") or when the agent needs to render a sample after extraction.
+ユーザーがスタイルの学習を要求したとき（"learn my style from `<path>` as `<name>`"）、または抽出後にサンプルをレンダリングする必要があるときに、`SKILL.md` によりオンデマンドでロードされます。
 
-## Sample diagram (for approval render)
+## サンプル図表（承認レンダリング用）
 
-After extracting a candidate preset, render this seven-node sample using the candidate's palette/shapes/fonts/edges. Each role appears exactly once; six edges, one dashed, exercise `edges.arrow`, `edges.style`, and `edges.dashedFor`.
+候補プリセットを抽出した後、候補のパレット/形状/フォント/エッジを使って、この 7 ノードのサンプルをレンダリングする。各役割はちょうど一度だけ現れ、6 個のエッジ（1 個は破線）が `edges.arrow`、`edges.style`、`edges.dashedFor` を発揮する。
 
-**Layout (TB):**
-- Row 1 (y=40): `gateway` centered at x=340
-- Row 2 (y=180): `security` (x=80), `service` (x=340), `queue` (x=600)
-- Row 3 (y=340): `database` (x=80), `external` (x=340), `error` (x=600)
+**レイアウト (TB):**
+- 行 1 (y=40): `gateway` を x=340 で中央配置
+- 行 2 (y=180): `security` (x=80)、`service` (x=340)、`queue` (x=600)
+- 行 3 (y=340): `database` (x=80)、`external` (x=340)、`error` (x=600)
 
-**Template — substitute `{{...}}` placeholders from the candidate preset.**
+**テンプレート — `{{...}}` プレースホルダーを候補プリセットから置換する。**
 
-The vertex style for role `R` is built as:
+役割 `R` の頂点スタイルは次のように構築する：
 `<shapes[R]>;whiteSpace=wrap;html=1;fillColor=<palette[roles[R]].fillColor>;strokeColor=<palette[roles[R]].strokeColor>;fontFamily=<font.fontFamily>;fontSize=<font.fontSize>`
-- If `extras.sketch=true`, append `;sketch=1` to every vertex style AND every edge style.
-- If `extras.globalStrokeWidth !== 1` (i.e., any value other than the drawio default of 1, including `0.5`), append `;strokeWidth=<n>` to every vertex style AND every edge style.
+- `extras.sketch=true` の場合、すべての頂点スタイルおよびすべてのエッジスタイルに `;sketch=1` を追加。
+- `extras.globalStrokeWidth !== 1`（drawio デフォルトの 1 以外の任意の値、`0.5` を含む）の場合、すべての頂点スタイルおよびすべてのエッジスタイルに `;strokeWidth=<n>` を追加。
 
-The edge style is built as:
+エッジスタイルは次のように構築する：
 `<edges.style>;<edges.arrow>`
-- Per-edge routing keys (`exitX/entryX/...`) are added as literals below.
-- Edge 15 exercises `edges.dashedFor`:
-  - If `edges.dashedFor` is **non-empty**, use its first entry as the edge's `value` (label) AND append `;dashed=1` to the edge style.
-  - If `edges.dashedFor` is empty (`[]`), use the label `cross-call` and do NOT append `;dashed=1` — the preset has no dashed convention, so the sample must not fake one.
+- エッジごとのルーティングキー（`exitX/entryX/...`）は以下にリテラルとして追加されている。
+- エッジ 15 は `edges.dashedFor` を発揮する：
+  - `edges.dashedFor` が**空でない**場合、その最初のエントリをエッジの `value`（ラベル）として使用し、エッジスタイルに `;dashed=1` を追加。
+  - `edges.dashedFor` が空 (`[]`) の場合、ラベル `cross-call` を使用し、`;dashed=1` を追加**しない** — プリセットに破線規約が無いため、サンプルはそれを偽装してはならない。
 
-**Placeholder expansion (applied when filling the XML):**
-- `{{VSTYLE:<role>}}` expands to the vertex-style formula above with `R = <role>`. Write the result as a literal string; do not URL-encode.
-- `{{ESTYLE}}` expands to the edge-style formula above.
-- `{{EDGE15_LABEL}}` and `{{EDGE15_DASH}}` follow the Edge-15 rule above.
+**プレースホルダー展開（XML に埋め込むときに適用）：**
+- `{{VSTYLE:<role>}}` は `R = <role>` を伴う上記の頂点スタイル式に展開される。結果をリテラル文字列として書く；URL エンコードしない。
+- `{{ESTYLE}}` は上記のエッジスタイル式に展開される。
+- `{{EDGE15_LABEL}}` と `{{EDGE15_DASH}}` は上記の Edge-15 ルールに従う。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -92,63 +92,63 @@ The edge style is built as:
 </mxfile>
 ```
 
-### Rendering the sample
+### サンプルのレンダリング
 
-1. Write the filled XML to `/tmp/drawio-preset-<name>.drawio`.
-2. Run the same `draw.io -x -f png -e -s 2 -o <preset-name>-sample.png <tmp>.drawio` command the main workflow uses.
-3. Save the PNG as `./preset-<name>-sample.png` (the user's working directory).
-4. Show the user: preset summary table + PNG path + provenance/confidence line.
+1. 埋め込まれた XML を `/tmp/drawio-preset-<name>.drawio` に書き込む。
+2. メインワークフローと同じ `draw.io -x -f png -e -s 2 -o <preset-name>-sample.png <tmp>.drawio` コマンドを実行する。
+3. PNG を `./preset-<name>-sample.png`（ユーザーの作業ディレクトリ）として保存。
+4. ユーザーに表示：プリセットサマリーテーブル + PNG パス + プロベナンス/信頼度の行。
 
-### Approval loop
+### 承認ループ
 
-- "save" / "looks good" → write candidate to `~/.drawio-skill/styles/<name>.json`; delete tempfile and sample PNG.
-- "change <field> to <value>" → edit the in-memory candidate; re-render; re-ask.
-- "cancel" → delete tempfile and sample PNG; no save.
+- "save" / "looks good" → 候補を `~/.drawio-skill/styles/<name>.json` に書き込む；tempfile とサンプル PNG を削除。
+- "change <field> to <value>" → メモリ上の候補を編集；再レンダリング；再度尋ねる。
+- "cancel" → tempfile とサンプル PNG を削除；保存しない。
 
-### If sample render fails (draw.io CLI missing / export error)
+### サンプルレンダリングが失敗した場合（draw.io CLI 欠落 / エクスポートエラー）
 
-Still show the summary table and the provenance line. Note: *"Could not render sample PNG (CLI unavailable). Save anyway on your OK."* Do not block.
+それでもサマリーテーブルとプロベナンス行は表示する。注記：*"Could not render sample PNG (CLI unavailable). Save anyway on your OK."* ブロックしない。
 
-## XML extraction path
+## XML 抽出パス
 
-Input: a `.drawio` file path. Output: candidate preset JSON. Deterministic, no LLM inference.
+入力：`.drawio` ファイルパス。出力：候補プリセット JSON。決定論的、LLM 推論なし。
 
-### Steps
+### ステップ
 
-1. **Parse the file.** Read the XML, collect every `<mxCell>` with a `style=` attribute, split into vertices (`vertex="1"`) and edges (`edge="1"`).
-2. **Tokenize each `style=` string** on `;`. Each element is either `key=value` or a bare keyword (e.g., `rhombus`, `ellipse`, `rounded=1`).
-3. **Extract palette.** For every vertex, take the `(fillColor, strokeColor)` pair (skip vertices with neither). Count frequency. Keep the top ≤7 pairs.
-4. **Extract shape vocabulary + role mapping.** For each vertex determine a shape class by precedence:
-   `cylinder3 > ellipse > rhombus > swimlane > rounded=1 > rounded=0`.
-   Then infer the semantic role from the vertex's shape class and its `value` (label) attribute. **Evaluate the rules below in order; first match wins.**
+1. **ファイルをパースする。** XML を読み、`style=` 属性を持つすべての `<mxCell>` を収集し、頂点（`vertex="1"`）とエッジ（`edge="1"`）に分割する。
+2. **各 `style=` 文字列を `;` でトークン化。** 各要素は `key=value` または裸のキーワード（例：`rhombus`、`ellipse`、`rounded=1`）のいずれか。
+3. **パレットを抽出。** 各頂点について、`(fillColor, strokeColor)` ペアを取得（どちらも持たない頂点はスキップ）。頻度をカウント。トップ ≤7 ペアを保持。
+4. **形状語彙 + 役割マッピングを抽出。** 各頂点について、優先順位で形状クラスを決定する：
+   `cylinder3 > ellipse > rhombus > swimlane > rounded=1 > rounded=0`。
+   その後、頂点の形状クラスと `value`（ラベル）属性から意味的役割を推測する。**以下のルールを順に評価；最初に一致したものが勝つ。**
    - `cylinder3` → `database`
    - `rhombus` → `decision`
    - `swimlane` → `container`
-   - `dashed=1` present + **grey-family fill** (hex where the R, G, and B channels all fall within ±16 of each other, i.e., near-achromatic) → `external`
-   - label matches `/queue|bus|kafka|rabbit/i` → `queue`
-   - label matches `/gateway|api|lb|load/i` → `gateway`
-   - label matches `/auth|login|jwt|oauth/i` → `security`
-   - label matches `/error|fail|alert/i` → `error`
-   - everything else → `service`
+   - `dashed=1` が存在 + **グレー系の塗りつぶし**（R、G、B チャネルがすべて互いに ±16 以内、つまりアクロマティックに近い 16 進数）→ `external`
+   - ラベルが `/queue|bus|kafka|rabbit/i` に一致 → `queue`
+   - ラベルが `/gateway|api|lb|load/i` に一致 → `gateway`
+   - ラベルが `/auth|login|jwt|oauth/i` に一致 → `security`
+   - ラベルが `/error|fail|alert/i` に一致 → `error`
+   - その他すべて → `service`
 
-   For each **role that has a canonical palette slot** — `service`, `database`, `queue`, `gateway`, `error`, `external`, `security` — the most frequent `(role, color-pair)` mapping wins. The pair goes into the role's canonical palette slot:
-   `service→primary, database→success, queue→warning, gateway→accent, error→danger, external→neutral, security→secondary`.
-   Set `roles[role]` to that slot name.
+   **正準パレットスロットを持つ各役割** — `service`、`database`、`queue`、`gateway`、`error`、`external`、`security` — について、最も頻度の高い `(role, color-pair)` マッピングが勝つ。そのペアはその役割の正準パレットスロットに入る：
+   `service→primary、database→success、queue→warning、gateway→accent、error→danger、external→neutral、security→secondary`。
+   `roles[role]` をそのスロット名に設定する。
 
-   **Decision and container shapes do not get a `roles[...]` entry** — they are recorded only in `shapes.decision` and `shapes.container`. Any color pairs observed on decision/container vertices still participate in the palette (they can fill leftover slots) but are not tied to a semantic role.
+   **ディシジョンとコンテナの形状は `roles[...]` エントリを取得しない** — `shapes.decision` と `shapes.container` にのみ記録される。ディシジョン/コンテナ頂点で観察されたカラーペアは引き続きパレットに参加する（残りのスロットを埋められる）が、意味的役割には結び付かない。
 
-   Leftover color pairs (not claimed by any role-slot mapping) fill remaining empty palette slots in descending-frequency order.
+   残りのカラーペア（役割スロットマッピングで主張されないもの）は、頻度降順で残りの空きパレットスロットを埋める。
 
-   Record the shape class string used per role in `shapes[role]`. The six named shape keys are `service`, `database`, `queue`, `decision`, `external`, `container` — `gateway`, `error`, and `security` roles inherit `shapes.service` and do not get their own `shapes[...]` entry. Example: `shapes.database = "shape=cylinder3"`.
+   役割ごとに使われた形状クラス文字列を `shapes[role]` に記録する。6 つの名前付き形状キーは `service`、`database`、`queue`、`decision`、`external`、`container` — `gateway`、`error`、`security` の役割は `shapes.service` を継承し、自分の `shapes[...]` エントリは取得しない。例：`shapes.database = "shape=cylinder3"`。
 
-5. **Extract fonts.** Compute modal `fontFamily` and `fontSize` across vertices; emit them as `font.fontFamily` and `font.fontSize`. Also track `fontStyle` per vertex as a **working variable** (not an output field — the schema has no top-level `font.fontStyle`). If a distinguishable subset of vertices uses a larger `fontSize` combined with `fontStyle=1` (bold), treat that subset as titles: set `font.titleFontSize` to their modal size and `font.titleBold: true`. Otherwise omit both title fields.
+5. **フォントを抽出。** 頂点全体で `fontFamily` と `fontSize` の最頻値を計算する；`font.fontFamily` と `font.fontSize` として出力。各頂点の `fontStyle` も**作業変数**として追跡する（出力フィールドではない — スキーマにはトップレベルの `font.fontStyle` がない）。識別可能な頂点のサブセットがより大きな `fontSize` と `fontStyle=1`（太字）の組み合わせを使う場合、そのサブセットをタイトルとして扱う：`font.titleFontSize` をその最頻サイズに、`font.titleBold: true` に設定。そうでなければ両タイトルフィールドを省略。
 
-6. **Extract edge defaults.** Take the modal edge style string, but strip these per-edge coordinate keys before counting: `entryX`, `entryY`, `exitX`, `exitY`, `entryDx`, `entryDy`, `exitDx`, `exitDy`. Record arrow style from `endArrow`/`endFill` separately in `edges.arrow`.
-   If any edges have `dashed=1`, collect their `value` (label) attributes. If ≥2 share a common token (e.g., all are labeled "async" or "optional"), add that token to `edges.dashedFor`.
+6. **エッジのデフォルトを抽出。** 最頻のエッジスタイル文字列を取るが、カウント前に以下のエッジごとの座標キーを除去する：`entryX`、`entryY`、`exitX`、`exitY`、`entryDx`、`entryDy`、`exitDx`、`exitDy`。`endArrow`/`endFill` から矢印スタイルを `edges.arrow` に別途記録。
+   `dashed=1` を持つエッジがあれば、その `value`（ラベル）属性を収集する。≥2 個が共通のトークンを共有する場合（例：すべて "async" または "optional" とラベル付けされている）、そのトークンを `edges.dashedFor` に追加。
 
-7. **Extract extras.** `sketch=1` seen on any vertex or edge → `extras.sketch = true`. Modal `strokeWidth` across vertices → `extras.globalStrokeWidth` (default `1`).
+7. **エクストラを抽出。** 任意の頂点またはエッジに `sketch=1` が見られる → `extras.sketch = true`。頂点全体の最頻 `strokeWidth` → `extras.globalStrokeWidth`（デフォルト `1`）。
 
-8. **Set provenance.**
+8. **プロベナンスを設定。**
    ```json
    {
      "source": { "type": "xml", "path": "<input absolute path>", "extracted_at": "YYYY-MM-DD" },
@@ -156,99 +156,99 @@ Input: a `.drawio` file path. Output: candidate preset JSON. Deterministic, no L
    }
    ```
 
-### XML edge cases
+### XML エッジケース
 
-| Situation | Behavior |
+| 状況 | 振る舞い |
 |---|---|
-| Source has <3 distinct color pairs | Leave unfilled slots as `null`. Downgrade `confidence` to `"medium"`. Summary warns the user. |
-| Source has >7 color pairs | Keep the top 7 by frequency. Summary warns that some colors were dropped. |
-| Non-standard `shape=` keywords (e.g., `shape=mxgraph.aws4.*`) | These do not match the Step 4 precedence ladder, so the vertex falls through to `rounded=0` for shape-class purposes. Iconography is lost; color, label, and edge style are still captured. Role inference still runs via the label-regex rules. Summary notes: *"Non-standard shape library detected — iconography not preserved in preset (color and label captured)."* |
-| Non-English labels | The English-keyword regexes in step 4 will mostly miss; most vertices collapse to `service`. Palette/shapes/font/edges still captured correctly (they don't depend on label text). `confidence` stays `"high"`. Summary notes: *"Role labels not in English — `service`/`database`/`decision`/`container`/`external` inferred from shape class; other roles not mapped."* |
-| File has no `<mxCell vertex="1">` at all | Stop. Refuse to save. Message: *"Nothing to learn from — source file has no shapes."* |
+| ソースが 3 個未満の異なるカラーペアを持つ | 埋まらないスロットを `null` のままにする。`confidence` を `"medium"` に下げる。サマリーでユーザーに警告。 |
+| ソースが 7 個より多いカラーペアを持つ | 頻度のトップ 7 を保持。サマリーでいくつかの色が落とされたと警告。 |
+| 非標準の `shape=` キーワード（例：`shape=mxgraph.aws4.*`） | これらはステップ 4 の優先順位ラダーに一致しないため、頂点は形状クラス目的では `rounded=0` にフォールスルーする。アイコノグラフィーは失われる；色、ラベル、エッジスタイルは引き続き捕捉される。役割推測はラベルの正規表現ルール経由で引き続き実行される。サマリーで注記：*"Non-standard shape library detected — iconography not preserved in preset (color and label captured)."* |
+| 英語以外のラベル | ステップ 4 の英語キーワード正規表現はほとんど一致しない；ほとんどの頂点が `service` に潰れる。パレット/形状/フォント/エッジは正しく捕捉される（ラベルテキストに依存しない）。`confidence` は `"high"` のまま。サマリーで注記：*"Role labels not in English — `service`/`database`/`decision`/`container`/`external` inferred from shape class; other roles not mapped."* |
+| ファイルに `<mxCell vertex="1">` がまったく無い | 停止。保存を拒否。メッセージ：*"Nothing to learn from — source file has no shapes."* |
 
-## Image extraction path
+## 画像抽出パス
 
-Input: path to a PNG/JPG (or any vision-readable image format). Output: candidate preset JSON. Inference-based; `confidence: "medium"` at best.
+入力：PNG/JPG（または任意のビジョン読取り可能画像フォーマット）のパス。出力：候補プリセット JSON。推論ベース；`confidence: "medium"` がベスト。
 
-**Prerequisite:** the agent's vision capability must be available (same mechanism the main workflow's self-check uses). If vision is not available, stop and tell the user:
+**前提条件：** エージェントのビジョン機能が利用可能であること（メインワークフローのセルフチェックが使うのと同じメカニズム）。ビジョンが利用不可の場合、停止してユーザーに伝える：
 *"Image-based learning needs a vision-enabled model (Claude Sonnet or Opus). Re-run on such a model, or provide the `.drawio` source file instead."*
 
-### Steps
+### ステップ
 
-1. **Read the image.** Use the agent's vision input — the same path the main workflow's step 5 uses to read exported PNGs during self-check.
+1. **画像を読む。** エージェントのビジョン入力を使う — メインワークフローのステップ 5 がセルフチェック中にエクスポートされた PNG を読むのと同じパス。
 
-2. **Extract palette by visual inspection.** Identify distinct fill-color regions on shape bodies.
+2. **目視で検査してパレットを抽出。** 形状本体上の異なる塗りつぶし色領域を識別する。
 
-   For each distinct fill:
-   - `fillColor` — quantize each RGB channel to the nearest multiple of 16. If the resulting HSL lightness is below 0.75, raise it to 0.85 (keep hue and saturation; set L=0.85; HSL→RGB round-trip). Emit as `#RRGGBB`. Drawio-standard pastels occupy L≈0.85–0.96; below 0.75 reads as "too dark for a fill color" and this step lifts it back into that range.
-   - `strokeColor` — read the matching border. If unreadable, derive from fill by darkening ~25% (match HSL, drop L by 0.25).
+   それぞれの異なる塗りつぶしについて：
+   - `fillColor` — 各 RGB チャネルを 16 の倍数に最近接で量子化。結果の HSL の明度が 0.75 未満なら、0.85 に上げる（色相と彩度を保持；L=0.85 を設定；HSL→RGB ラウンドトリップ）。`#RRGGBB` として出力。Drawio 標準のパステルは L≈0.85–0.96 を占める；0.75 未満は「塗りつぶし色としては暗すぎる」と読み取られ、このステップはそれをその範囲に持ち上げる。
+   - `strokeColor` — 対応するボーダーを読み取る。読み取れない場合、塗りつぶしから ~25% 暗くして導出（HSL を一致させ、L を 0.25 落とす）。
 
-   Map each `(fillColor, strokeColor)` pair to a named slot using this decision order:
+   この決定順序を使って、各 `(fillColor, strokeColor)` ペアを名前付きスロットにマップする：
 
-   1. **Grey check first.** If the fill has R, G, and B channels all within ±16 of each other (same definition as the XML path's grey-family rule), OR HSL saturation < 0.20, classify as `neutral`. This check wins regardless of hue angle.
-   2. **Hue band otherwise.** Use these explicit HSL hue ranges:
-      - 180°–260° → `primary` (blue)
-      - 80°–170° → `success` (green)
-      - 45°–65° → `warning` (yellow)
-      - 20°–44° → `accent` (orange)
-      - 0°–19° or 320°–360° → `danger` (red/pink)
-      - 260°–320° → `secondary` (purple)
-   3. **No band matched** (gap regions at 65°–80° or 170°–180°) → spill to the nearest band by angular distance.
+   1. **最初にグレーをチェック。** 塗りつぶしの R、G、B チャネルがすべて互いに ±16 以内（XML パスのグレー系ルールと同じ定義）、または HSL 彩度 < 0.20 の場合、`neutral` として分類。このチェックは色相角度に関係なく勝つ。
+   2. **そうでなければ色相帯。** これらの明示的な HSL 色相範囲を使う：
+      - 180°–260° → `primary`（青）
+      - 80°–170° → `success`（緑）
+      - 45°–65° → `warning`（黄）
+      - 20°–44° → `accent`（オレンジ）
+      - 0°–19° または 320°–360° → `danger`（赤/ピンク）
+      - 260°–320° → `secondary`（紫）
+   3. **どの帯にもマッチしない**（65°–80° または 170°–180° のギャップ領域）→ 角度距離で最も近い帯にこぼれる。
 
-   **Collision rule.** If ≥2 distinct fills land in the same slot, sort them by total pixel area covered in the image (descending). The largest keeps the canonical slot. Remaining fills spill to the **nearest empty slot** measured by hue-band angular distance — first to adjacent bands on either side, then farther out. If every slot is already filled, drop the extras and warn in the summary.
+   **衝突ルール。** ≥2 個の異なる塗りつぶしが同じスロットに着地した場合、画像内のカバーピクセル面積で並べる（降順）。最大のものが正準スロットを保持。残りの塗りつぶしは、色相帯の角度距離で測った**最も近い空きスロット**にこぼれる — まず両側の隣接帯、その後より遠くへ。すべてのスロットが既に埋まっている場合、余分なものを落とし、サマリーで警告。
 
-3. **Extract shape vocabulary.** Classify every visible shape by silhouette:
-   - rounded rectangle → `rounded=1`
-   - sharp rectangle → `rounded=0`
-   - circle / oval → `ellipse`
-   - diamond → `rhombus`
-   - cylinder (rectangle with curved top/bottom) → `shape=cylinder3`
-   - titled container (header bar + nested children inside) → `swimlane;startSize=30`
-   - dashed-bordered rectangle → `rounded=1;dashed=1`
+3. **形状語彙を抽出。** 可視のすべての形状をシルエットで分類する：
+   - 角丸矩形 → `rounded=1`
+   - 鋭角矩形 → `rounded=0`
+   - 円 / 楕円 → `ellipse`
+   - ひし形 → `rhombus`
+   - 円柱（上下が湾曲した矩形）→ `shape=cylinder3`
+   - タイトル付きコンテナ（ヘッダーバー + ネストした子要素）→ `swimlane;startSize=30`
+   - 破線ボーダー矩形 → `rounded=1;dashed=1`
 
-   Role assignment uses the **same label-text + shape rules as the XML path step 4**. Visible labels are read via vision.
+   役割の割り当ては、**XML パスのステップ 4 と同じラベルテキスト + 形状ルール**を使う。可視ラベルはビジョン経由で読まれる。
 
-4. **Extract fonts.** Best-effort. Distinguishable categories:
-   - clearly serif → `fontFamily: "Georgia"`
-   - clearly monospaced → `fontFamily: "Courier New"`
-   - otherwise → `fontFamily: "Helvetica"`
+4. **フォントを抽出。** ベストエフォート。識別可能なカテゴリ：
+   - 明らかなセリフ → `fontFamily: "Georgia"`
+   - 明らかな等幅 → `fontFamily: "Courier New"`
+   - その他 → `fontFamily: "Helvetica"`
 
-   Size by relative appearance:
-   - small → `fontSize: 11`
-   - medium → `fontSize: 12`
-   - large → `fontSize: 14`
+   見た目の相対的なサイズで：
+   - 小 → `fontSize: 11`
+   - 中 → `fontSize: 12`
+   - 大 → `fontSize: 14`
 
-   If titles/container headers are distinctly larger or bolder → set `titleFontSize` accordingly and `titleBold: true`.
+   タイトル/コンテナヘッダーが明らかに大きいか太字 → それに応じて `titleFontSize` を設定、`titleBold: true`。
 
-5. **Extract edge defaults.**
-   - Right-angle orthogonal arrows → `edges.style = "edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1"`.
-   - Curved arrows → append `;curved=1` to `edges.style`.
-   - Filled triangle arrowheads → `edges.arrow = "endArrow=classic;endFill=1"`.
-   - Open V-shaped arrowheads → `edges.arrow = "endArrow=open;endFill=0"`.
-   - Any dashed arrows near labels like "optional", "async", "fallback", "secondary" → add those label tokens to `edges.dashedFor`.
+5. **エッジのデフォルトを抽出。**
+   - 直角の直交矢印 → `edges.style = "edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1"`。
+   - 曲線矢印 → `edges.style` に `;curved=1` を追加。
+   - 塗りつぶしの三角形の矢印先端 → `edges.arrow = "endArrow=classic;endFill=1"`。
+   - オープン V 字の矢印先端 → `edges.arrow = "endArrow=open;endFill=0"`。
+   - "optional"、"async"、"fallback"、"secondary" などのラベルの近くの破線矢印 → それらのラベルトークンを `edges.dashedFor` に追加。
 
-6. **Extract extras.**
-   - Visibly hand-drawn / rough / sketch look (wavy strokes, uneven fills) → `extras.sketch = true`.
-   - Heavy strokes (clearly >1.5× normal) → `extras.globalStrokeWidth = 2`.
-   - Otherwise default: `extras = { "sketch": false, "globalStrokeWidth": 1 }`.
+6. **エクストラを抽出。**
+   - 目に見えて手描き / 粗い / スケッチ風（波打つストローク、不均一な塗りつぶし）→ `extras.sketch = true`。
+   - 太いストローク（明らかに通常の >1.5×）→ `extras.globalStrokeWidth = 2`。
+   - そうでなければデフォルト：`extras = { "sketch": false, "globalStrokeWidth": 1 }`。
 
-7. **Set provenance and confidence.**
+7. **プロベナンスと信頼度を設定。**
    ```json
    {
      "source": { "type": "image", "path": "<input absolute path>", "extracted_at": "YYYY-MM-DD" },
      "confidence": "medium"
    }
    ```
-   Adjustments:
-   - <3 distinct shapes identifiable → `confidence: "low"`.
-   - Image path stays at `"medium"` by default. The only path to `"high"` is a strictly-verifiable signal: the source image was exported from drawio itself (recognizable drawio default chrome, grid, or a visible drawio watermark), **and** all seven palette slots are filled, **and** all seven roles are labeled. This preserves the semantic gap between inference-based (image) and parse-based (XML) provenance.
+   調整：
+   - 識別可能な形状が 3 個未満 → `confidence: "low"`。
+   - 画像パスはデフォルトで `"medium"` のまま。`"high"` への唯一のパスは厳密に検証可能なシグナル：ソース画像が drawio 自体からエクスポートされたもの（認識可能な drawio デフォルトクロム、グリッド、または可視の drawio ウォーターマーク）、**かつ** 7 つすべてのパレットスロットが埋まっている、**かつ** 7 つすべての役割がラベル付けされている。これは推論ベース（画像）とパースベース（XML）のプロベナンスの意味的ギャップを保持する。
 
-### Image edge cases
+### 画像エッジケース
 
-| Situation | Behavior |
+| 状況 | 振る舞い |
 |---|---|
-| Vision unavailable | Stop as described above — do not fall back to guessing. |
-| Image has <3 identifiable shapes | Continue; mark `confidence: "low"`; summary explicitly warns the user that the preset is a loose approximation. |
-| Image has no visible labels | Role assignment collapses to shape-class only: cylinders → `database`, diamonds → `decision`, swimlanes → `container`, dashed-bordered rectangles with grey fill → `external`, everything else → `service`. Palette/font/edges still captured. Summary notes: *"No labels readable — semantic roles beyond shape-class not inferred."* |
-| Two palette slots would land in the same hue family | Keep the more frequent one in its canonical slot; spill the other to the adjacent empty slot (rule in step 2). |
-| Image has more than 7 distinct fills | Keep the 7 most area-covering fills per the Step 2 collision rule. Summary warns that some colors were dropped. |
+| ビジョンが利用不可 | 上記の通り停止 — 推測にフォールバックしない。 |
+| 画像に識別可能な形状が 3 個未満 | 続行；`confidence: "low"` でマーク；サマリーでプリセットが緩い近似であることをユーザーに明示的に警告。 |
+| 画像に可視ラベルが無い | 役割の割り当ては形状クラスのみに潰れる：円柱 → `database`、ひし形 → `decision`、スイムレーン → `container`、グレー塗りつぶしの破線ボーダー矩形 → `external`、その他すべて → `service`。パレット/フォント/エッジは引き続き捕捉。サマリーで注記：*"No labels readable — semantic roles beyond shape-class not inferred."* |
+| 2 つのパレットスロットが同じ色相ファミリーに着地 | より頻度の高いものを正準スロットに保持；他方は隣接する空きスロットにこぼれる（ステップ 2 のルール）。 |
+| 画像が 7 個より多い異なる塗りつぶしを持つ | ステップ 2 の衝突ルールにより、面積が最大の 7 つを保持。サマリーでいくつかの色が落とされたと警告。 |
