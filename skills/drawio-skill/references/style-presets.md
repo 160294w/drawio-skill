@@ -1,110 +1,110 @@
-# スタイルプリセット — 学習、適用、管理
+# スタイルプリセット — 学習・適用・管理
 
-**スタイルプリセット**とは、ユーザーのビジュアル設定 — パレット、形状語彙、フォント、エッジスタイル — を捕捉した名前付き JSON ファイルです。プリセットがアクティブな場合、SKILL.md の色/形状/エッジテーブルにある組み込み規約を完全に置き換えます。
+**スタイルプリセット**とは、ユーザーのビジュアル設定（パレット、形状の語彙、フォント、エッジスタイル）をまとめた、名前付きの JSON ファイルです。プリセットが有効なときは、SKILL.md の色・形状・エッジの組み込み規約をすべてプリセットの内容で置き換えます。
 
-このファイルを読むのは：
-- ユーザーがファイルからスタイルを「学習」、「保存」、「記憶」、「抽出」するよう求めたとき
+このファイルを読むのは次のような場合です：
+- ユーザーがファイルからスタイルを「学習」「保存」「記憶」「抽出」してほしいと依頼したとき
 - ユーザーが既存のプリセットを管理したいとき（一覧、デフォルト設定、削除、名前変更）
-- ステップ 0.5 でアクティブなプリセットが解決され、その適用ルールが必要なとき
-- プリセットファイルを読み込む前に検証する必要があるとき
+- ステップ 0.5 で有効なプリセットが解決され、その適用ルールが必要になったとき
+- プリセットファイルを読み込む前に検証が必要なとき
 
-## 場所と検索順序
+## 配置場所と検索順序
 
-1. `~/.drawio-skill/styles/<name>.json` — ユーザープリセット（`git pull` で残る）。
-2. `<this-skill-dir>/styles/built-in/<name>.json` — スキルに同梱の組み込み（`default`、`corporate`、`handdrawn`）。
+1. `~/.drawio-skill/styles/<name>.json` — ユーザープリセット（`git pull` でも残る）。
+2. `<this-skill-dir>/styles/built-in/<name>.json` — スキルに同梱の組み込みプリセット（`default`、`corporate`、`handdrawn`）。
 
-ユーザープリセットは同名の組み込みを覆い隠します。
+ユーザープリセットは、同名の組み込みプリセットを覆い隠します。
 
-ユーザープリセットのみが `"default": true` を持てます。ユーザーが *"`<built-in-name>` を私のデフォルトに"* と言ったときは、まず組み込み JSON を `~/.drawio-skill/styles/<name>.json` にコピーし、その後コピー側で `default: true` を設定する — 同梱の組み込みには触れないでください。
+`"default": true` を持てるのはユーザープリセットだけです。ユーザーが *"`<built-in-name>` をデフォルトにして"* と言ったときは、まず組み込みの JSON を `~/.drawio-skill/styles/<name>.json` にコピーし、コピー側で `default: true` を設定してください。同梱の組み込みプリセットには触れないでください。
 
-**名前の正規化：** ファイルを書く、または検索する前に、ユーザー指定の名前を常に小文字にする（プリセットスキーマは小文字を強制；大文字の名前は検証に失敗します）。
+**名前の正規化：** ファイルを書き込む前、または検索する前に、ユーザー指定の名前を必ず小文字に変換してください（プリセットスキーマは小文字を強制するため、大文字を含む名前は検証に失敗します）。
 
 ## プリセットの適用
 
-SKILL.md のステップ 0.5 がプリセットを特定した場合、この図表に対する組み込みのパレット、形状キーワード、エッジのデフォルト、フォントを完全に置き換えます — 組み込みのカラーテーブルから値を混ぜないでください。
+SKILL.md のステップ 0.5 でプリセットが特定された場合は、そのプリセットによってこの図表の組み込みパレット、形状キーワード、エッジのデフォルト、フォントをすべて置き換えます。組み込みのカラーテーブルから値を混ぜないでください。
 
-**色の検索。** 形状が果たす各役割（service / database / queue / gateway / error / external / security）について、`preset.roles[role]` をスロット名に解決し、続いて `preset.palette[<slot>]` を `(fillColor, strokeColor)` ペアに解決する。`roles[role]` が未設定または解決されたスロットが `null` の場合、次のフォールバックの梯子に従う：
+**色の解決。** 形状が担う各役割（service / database / queue / gateway / error / external / security）について、`preset.roles[role]` をスロット名に解決し、続いて `preset.palette[<slot>]` を `(fillColor, strokeColor)` ペアに解決します。`roles[role]` が未設定、または解決されたスロットが `null` の場合は、以下のフォールバック手順を順に試します：
 
-1. その役割の正準スロットを試す（`service→primary`、`database→success`、`queue→warning`、`gateway→accent`、`error→danger`、`external→neutral`、`security→secondary`）。
+1. その役割の標準スロットを試す（`service→primary`、`database→success`、`queue→warning`、`gateway→accent`、`error→danger`、`external→neutral`、`security→secondary`）。
 2. そのスロットも空であれば、プリセット内で最も埋まっている非 null スロットを選ぶ。
-3. 組み込みのカラーテーブルに手を伸ばさないこと — プリセットが権威。
+3. 組み込みのカラーテーブルには戻らない — プリセットの値が優先される。
 
-**ディシジョンとコンテナの形状**は `preset.roles` にない — 形状語彙（`preset.shapes.decision`、`preset.shapes.container`）は持つが、役割からスロットへのマッピングはない。色は次のように選ぶ：
-- **ディシジョン**（ひし形）→ `preset.palette.warning` を使う（組み込み規約では正準の黄色スロット）。`warning` が空なら、上記のスロットフォールバック梯子を `warning` から開始して適用。
-- **コンテナ**（スイムレーン）→ コンテナが表す階層/グループに対応するパレットスロットを使う（例：「Services」階層コンテナは `primary` を、"Data" 階層は `success` を使う）。階層シグナルが無ければ、デフォルトで `primary`。
+**判定とコンテナの形状**は `preset.roles` には含まれません。形状の語彙（`preset.shapes.decision`、`preset.shapes.container`）は持ちますが、役割からスロットへのマッピングはありません。色は次のように決めます：
+- **判定**（ひし形）→ `preset.palette.warning` を使う（組み込み規約では標準の黄色スロット）。`warning` が空の場合は、上記のフォールバック手順を `warning` から始めて適用する。
+- **コンテナ**（スイムレーン）→ コンテナが表す階層/グループに対応するパレットスロットを使う（例：「Services」階層のコンテナは `primary`、"Data" 階層は `success` を使う）。階層の手がかりがなければ、デフォルトで `primary` を使う。
 
-**形状キーワード。** `preset.shapes[role]` を頂点スタイル文字列の**プレフィックス**として使う（`whiteSpace=wrap;html=1;...` の前）。例：database 役割の場合、`preset.shapes.database = "shape=cylinder3"` なら、頂点スタイルは `shape=cylinder3;whiteSpace=wrap;html=1;fillColor=...` で始まる。6 つの名前付き形状キーは `service`、`database`、`queue`、`decision`、`external`、`container`。`gateway`、`error`、`security` の役割は、プリセットがそれぞれの名前のキーを明示的に埋めない限り `preset.shapes.service` を再利用する。
+**形状キーワード。** `preset.shapes[role]` を頂点スタイル文字列の**先頭**に置きます（`whiteSpace=wrap;html=1;...` より前）。例：database 役割の場合、`preset.shapes.database = "shape=cylinder3"` なら、頂点スタイルは `shape=cylinder3;whiteSpace=wrap;html=1;fillColor=...` で始まります。6 つの形状キーは `service`、`database`、`queue`、`decision`、`external`、`container` です。`gateway`、`error`、`security` の役割は、プリセットが明示的にキーを定義していない限り `preset.shapes.service` を使い回します。
 
-**エッジ。** `preset.edges.style` を基本エッジスタイル文字列として使う。`preset.edges.arrow` を追加する。エッジごとのルーティングキー（`exitX/exitY/entryX/entryY/...`）は、SKILL.md の通常のルーティングルールにより引き続き追加される。2 つの形状間のフローが `preset.edges.dashedFor` のトークンに一致する場合（ユーザープロンプトがその語を使ったため、またはエッジの一端がその典型的な関係が「optional」である役割を果たすため）、エッジスタイルに `;dashed=1` を追加する。
+**エッジ。** `preset.edges.style` を基本のエッジスタイル文字列として使い、`preset.edges.arrow` を後ろに連結します。エッジごとのルーティングキー（`exitX/exitY/entryX/entryY/...`）は、SKILL.md の通常のルーティングルールに従ってこれまで通り追加されます。2 つの形状間のフローが `preset.edges.dashedFor` のトークンに一致する場合（ユーザープロンプトがその語を使った、またはエッジの片端の役割が「optional」な関係を典型的に持つ場合）は、エッジスタイルに `;dashed=1` を追加してください。
 
-**フォント。** `fontFamily=<preset.font.fontFamily>;fontSize=<preset.font.fontSize>` をすべての頂点スタイルに追加する。コンテナヘッダーとスイムレーンタイトルには、`preset.font.titleBold` が `true` のとき、さらに `fontSize=<preset.font.titleFontSize>;fontStyle=1` を追加する。
+**フォント。** すべての頂点スタイルに `fontFamily=<preset.font.fontFamily>;fontSize=<preset.font.fontSize>` を追加します。コンテナのヘッダーやスイムレーンのタイトルには、`preset.font.titleBold` が `true` のとき、さらに `fontSize=<preset.font.titleFontSize>;fontStyle=1` を追加します。
 
-**エクストラ。**
-- `preset.extras.sketch === true` → すべての頂点スタイルとすべてのエッジスタイルに `sketch=1` を追加。
-- `preset.extras.globalStrokeWidth !== 1`（drawio デフォルトの 1 以外の任意の値、`0.5` を含む）→ すべての頂点スタイルとすべてのエッジスタイルに `strokeWidth=<n>` を追加。
+**追加要素。**
+- `preset.extras.sketch === true` のとき → すべての頂点スタイルとエッジスタイルに `sketch=1` を追加する。
+- `preset.extras.globalStrokeWidth !== 1` のとき（drawio のデフォルトである 1 以外の値、`0.5` を含む）→ すべての頂点スタイルとエッジスタイルに `strokeWidth=<n>` を追加する。
 
-**図表タイププリセットとの相互作用**（ERD / UML / シーケンス / ML / フローチャート）。図表タイププリセットは、ユーザープリセットが保持しなければならない構造的なスタイルキーワードを設定する（例：ERD テーブルは `shape=table;startSize=30;container=1;childLayout=tableLayout;...` に依存する）。ルールは：図表タイププリセットの構造的キーワードを保ち、その上にユーザープリセットの色 / フォント / エッジ / エクストラを重ねる。図表タイププリセットが色（`fillColor=#dae8fc` など）をハードコードしていて、それがユーザープリセットと競合する場合、ユーザープリセットの色が勝つ。例外：`fillColor=none` は構造的 — パレット色で置き換えないこと。
+**図表タイププリセットとの組み合わせ**（ERD / UML / シーケンス / ML / フローチャート）。図表タイププリセットは、ユーザープリセットが保持しなければならない構造的なスタイルキーワードを設定します（例：ERD テーブルは `shape=table;startSize=30;container=1;childLayout=tableLayout;...` に依存します）。ルールは次のとおりです：図表タイププリセットの構造的なキーワードはそのまま残し、その上にユーザープリセットの色・フォント・エッジ・追加要素を重ねます。図表タイププリセットが色（`fillColor=#dae8fc` など）をハードコードしていてユーザープリセットと競合する場合は、ユーザープリセットの色を優先します。例外：`fillColor=none` は構造的な指定なので、パレットの色で置き換えてはいけません。
 
 ## 学習フロー
 
-**トリガー：** "learn my style from `<path>` as `<name>`"、"save this as `<name>` style"、"remember this style as `<name>`"。
+**トリガー：** "learn my style from `<path>` as `<name>`"、"save this as `<name>` style"、"remember this style as `<name>`" など。
 
-**ファイル拡張子によるディスパッチ：**
+**ファイル拡張子による振り分け：**
 - `.drawio`、`.xml` → XML パス
-- `.png`、`.jpg`、`.jpeg`、`.svg`（ラスタライズされたフラット画像）→ 画像パス
+- `.png`、`.jpg`、`.jpeg`、`.svg`（ラスタライズされた画像）→ 画像パス
 
-**ステップ：**
+**手順：**
 
-1. **抽出リファレンスをロード。** `references/style-extraction.md` をコンテキストに読み込む。
-2. **抽出**は、リファレンスにある XML パスまたは画像パスの手順に従う。
-3. **正規化と候補の構築。** ユーザー指定のプリセット名を小文字に変換。このフロー中のすべてのファイルパスにこの正規化された名前を使う。候補プリセット JSON を構築して `/tmp/drawio-preset-<name>.json` に書き込む（ここで `<name>` は既に正規化された名前）。まだ `~/.drawio-skill/styles/<name>.json` には保存**しない**。
-4. **サンプルをレンダリング**する。`references/style-extraction.md` のサンプル図表スケルトンを、候補プリセットでパラメータ化して使う。メインワークフローと同じ `draw.io -x -f png -e -s 2 -o ./preset-<name>-sample.png /tmp/drawio-preset-<name>.drawio` コマンドを使って `./preset-<name>-sample.png` に PNG をエクスポート。
-5. **ユーザーに表示：**
-   - プリセットサマリーテーブル（パレット 16 進数値、役割ごとの形状、フォント、エッジスタイル、エクストラ）。
-   - サンプル PNG パス（環境がサポートする場合は画像を埋め込む）。
-   - プロベナンス行：`source.type`、`source.path`、`extracted_at`、`confidence`。
+1. **抽出用リファレンスを読み込む。** `references/style-extraction.md` をコンテキストに読み込みます。
+2. **抽出**は、リファレンスにある XML パスまたは画像パスの手順に従って行います。
+3. **正規化と候補の構築。** ユーザー指定のプリセット名を小文字に変換します。このフロー中のすべてのファイルパスで正規化後の名前を使ってください。候補となるプリセット JSON を構築して `/tmp/drawio-preset-<name>.json` に書き込みます（ここでの `<name>` はすでに正規化済み）。この段階では `~/.drawio-skill/styles/<name>.json` には**まだ保存しません**。
+4. **サンプルをレンダリング**します。`references/style-extraction.md` にあるサンプル図表のひな型に、候補プリセットの値を当てはめます。メインワークフローと同じ `draw.io -x -f png -e -s 2 -o ./preset-<name>-sample.png /tmp/drawio-preset-<name>.drawio` コマンドで、PNG を `./preset-<name>-sample.png` に書き出します。
+5. **ユーザーに表示する内容：**
+   - プリセットのサマリー表（パレットの 16 進値、役割ごとの形状、フォント、エッジスタイル、追加要素）。
+   - サンプル PNG のパス（環境が対応していれば画像を埋め込む）。
+   - 出所情報の行：`source.type`、`source.path`、`extracted_at`、`confidence`。
 6. **承認を待つ：**
-   - "save" / "looks good" → 候補を `~/.drawio-skill/styles/<name>.json` に書き込む。`~/.drawio-skill/styles/` が無ければ作成。tempfile とサンプル PNG を削除。
-   - "change `<field>` to `<value>`" → メモリ上の候補を編集し、再レンダリングし、再度尋ねる。
-   - "cancel" / "abort" / "no" → tempfile とサンプル PNG を削除；何も保存しない。
+   - "save" / "looks good" → 候補を `~/.drawio-skill/styles/<name>.json` に書き込む。`~/.drawio-skill/styles/` が無ければ作成する。一時ファイルとサンプル PNG を削除する。
+   - "change `<field>` to `<value>`" → メモリ上の候補を編集し、再レンダリングして、もう一度承認を求める。
+   - "cancel" / "abort" / "no" → 一時ファイルとサンプル PNG を削除し、何も保存しない。
 
-**エラー時の振る舞い：**
+**エラー時の挙動：**
 
-| 失敗 | 振る舞い |
+| 失敗の種類 | 挙動 |
 |---|---|
-| ソースパスが存在しない | 停止；パスが見つからないと報告。 |
-| XML パースが失敗 | 停止；パースエラーを報告；ファイルを drawio デスクトップで開いて修復することを提案。 |
-| 画像のビジョンが利用不可 | 停止；ビジョン対応モデルで再実行するか、`.drawio` ファイルを提供するようユーザーに伝える。 |
-| 抽出で 0 個の頂点 / 形状 | 停止；保存を拒否。 |
-| 抽出で 3 個未満の異なるカラーペア | 続行；`confidence: "low"`（画像）または `"medium"`（XML）でマーク；サマリーで警告。 |
-| プリセット名が既存のユーザープリセットと衝突 | 尋ねる：上書きするか、別名を選ぶか。 |
-| プリセット名が組み込みプリセットと衝突 | ユーザーディレクトリに保存（組み込みを覆い隠す）；一度警告。 |
-| サンプルレンダリングが失敗 | サマリーは表示；「サンプルをレンダリングできなかった — OK で保存する」と注記。ブロックしない。 |
+| ソースパスが存在しない | 停止し、パスが見つからない旨を報告する。 |
+| XML のパースに失敗 | 停止し、パースエラーを報告する。drawio デスクトップでファイルを開いて修復するよう提案する。 |
+| 画像用のビジョンが利用不可 | 停止し、ビジョン対応のモデルで再実行するか、`.drawio` ファイルを渡すようユーザーに伝える。 |
+| 抽出された頂点/形状が 0 個 | 停止し、保存を拒否する。 |
+| 抽出されたカラーペアが 3 種類未満 | 続行する。`confidence: "low"`（画像）または `"medium"`（XML）でマークし、サマリーで警告する。 |
+| プリセット名が既存のユーザープリセットと衝突 | 上書きするか別名にするかをユーザーに尋ねる。 |
+| プリセット名が組み込みプリセットと衝突 | ユーザーディレクトリに保存し（組み込みを覆い隠す）、一度だけ警告する。 |
+| サンプルのレンダリングに失敗 | サマリーは表示する。「サンプルをレンダリングできませんでした — OK なら保存します」と注記し、フローは止めない。 |
 
 ## 管理操作
 
-すべての操作は自然言語 — スラッシュコマンドなし。
+すべての操作は自然言語で受け付けます — スラッシュコマンドはありません。
 
-*すべての `<name>`、`<a>`、`<b>` 引数に、ファイル操作の前に名前正規化（小文字化）を適用する。*
+*すべての `<name>`、`<a>`、`<b>` 引数に対し、ファイル操作の前に名前の正規化（小文字化）を適用してください。*
 
-| ユーザーが言う | エージェントの動作 |
+| ユーザーの発話 | エージェントの動作 |
 |---|---|
-| "list my styles"、"what styles do I have"、"show me my style presets" | `~/.drawio-skill/styles/` と `<this-skill-dir>/styles/built-in/` を読む。テーブルで出力：`name`、`location`（user/built-in）、`source.type`、`confidence`、`default` フラグ。ユーザープリセットに覆い隠された組み込みはその旨マーク。 |
-| "show my `<name>` style"、"what's in `<name>`" | プリセット JSON を整形して出力 + 1 行サマリー（ソース、信頼度、デフォルトか否か）。 |
-| "make `<name>` the default"、"set `<name>` as default" | `<name>` がユーザープリセットの場合：そのプリセットに `default: true` を設定し、`default` を持っていた他のユーザープリセットからはクリア；両ファイルを保存。`<name>` が組み込みの場合：まず `<this-skill-dir>/styles/built-in/<name>.json` を `~/.drawio-skill/styles/<name>.json` にコピーし、その後コピー側で `default: true` を設定する。同梱の組み込みは決して変更しない。 |
-| "remove default"、"unset default" | `default: true` を持っているユーザープリセットからクリアする。 |
-| "delete `<name>`"、"remove `<name>`" | まず確認。次に `rm ~/.drawio-skill/styles/<name>.json`。`<this-skill-dir>/styles/built-in/` 配下のファイルの削除は拒否 — 同名のユーザープリセットで覆い隠すことを提案。 |
-| "rename `<a>` to `<b>`" | `mv ~/.drawio-skill/styles/<a>.json ~/.drawio-skill/styles/<b>.json`、その後内部の `name` フィールドを更新する。`<a>` が組み込みの場合は失敗（代わりにコピーしてから名前変更することを提案）。 |
-| "learn my style from `<path>` as `<name>`" | 上記の Learn フローにディスパッチ。 |
+| "list my styles"、"what styles do I have"、"show me my style presets" | `~/.drawio-skill/styles/` と `<this-skill-dir>/styles/built-in/` を読み込み、`name`、`location`（user/built-in）、`source.type`、`confidence`、`default` フラグを表で出力する。ユーザープリセットに覆い隠されている組み込みはその旨を示す。 |
+| "show my `<name>` style"、"what's in `<name>`" | プリセット JSON を整形して出力し、1 行のサマリー（ソース、信頼度、デフォルトかどうか）を添える。 |
+| "make `<name>` the default"、"set `<name>` as default" | `<name>` がユーザープリセットなら：そのプリセットに `default: true` を設定し、他のユーザープリセットの `default` をクリアして、両方のファイルを保存する。`<name>` が組み込みなら：まず `<this-skill-dir>/styles/built-in/<name>.json` を `~/.drawio-skill/styles/<name>.json` にコピーし、コピー側で `default: true` を設定する。同梱の組み込みは決して変更しない。 |
+| "remove default"、"unset default" | `default: true` が設定されているユーザープリセットからフラグをクリアする。 |
+| "delete `<name>`"、"remove `<name>`" | まず確認を取り、その後 `rm ~/.drawio-skill/styles/<name>.json` を実行する。`<this-skill-dir>/styles/built-in/` 配下のファイルの削除は拒否し、同名のユーザープリセットで覆い隠すよう提案する。 |
+| "rename `<a>` to `<b>`" | `mv ~/.drawio-skill/styles/<a>.json ~/.drawio-skill/styles/<b>.json` を実行し、ファイル内の `name` フィールドを更新する。`<a>` が組み込みの場合は失敗とし、代わりにコピーしてから名前変更するよう提案する。 |
+| "learn my style from `<path>` as `<name>`" | 上記の学習フローに振り分ける。 |
 
 ## プリセットファイルの検証
 
-任意のプリセットをロードする際（生成または管理のため）、軽量な構造チェックを行う：
-- 必須のトップレベルフィールドが存在すること（`name`、`version`、`palette`、`roles`、`shapes`、`font`、`edges`）。
+プリセットを読み込むとき（生成・管理いずれの場合も）、軽量な構造チェックを行います：
+- 必須のトップレベルフィールドがすべて存在すること（`name`、`version`、`palette`、`roles`、`shapes`、`font`、`edges`）。
 - `version === 1`。
-- すべての埋められたパレットスロットが `fillColor` と `strokeColor` の両方を `#RRGGBB` として持つこと。
-- `confidence` が存在する場合は ∈ {`"low"`、`"medium"`、`"high"`}。
+- 値が入っているパレットスロットには、`fillColor` と `strokeColor` の両方が `#RRGGBB` 形式で含まれていること。
+- `confidence` が存在する場合は、その値が {`"low"`、`"medium"`、`"high"`} のいずれかであること。
 
 検証に失敗した場合：
-- **生成中：** ユーザーに警告し、この 1 つの図表については組み込み規約にフォールバック、ファイルは変更しない。
-- **学習中：** 候補の保存を拒否し、どのフィールドが失敗したかを報告する。
+- **生成中：** ユーザーに警告し、その図表については組み込み規約にフォールバックする。ファイル自体は変更しない。
+- **学習中：** 候補の保存を拒否し、どのフィールドが検証に失敗したかを報告する。
